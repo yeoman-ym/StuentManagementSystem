@@ -143,10 +143,79 @@ int tch_menu(node_t *stulist, node_t *tchlist, tch_t *tchp)
 int welcome_tch_menu(node_t *stulist, node_t *tchlist)
 {
     int COUNT = LOOPCOUNT;
+    char ch[4] = "";
     while(COUNT)
     {
-
+        system("clear");
+        printf("**************************************\n");
+        printf("******  Input Username passwd ********\n");
+        printf("**************************************\n");
+        setbuf(stdin, NULL);
+        scanf("%s", ch);
+        //调用教师的用户名和密码
+        //比较教师名和密码
+        //成功则进入tch_menu()
+        COUNT--;
     }
+    return 0;
 }
 
+//学生操作菜单
+int stu_menu(node_t *stulist, stu_t *stup)
+{
+    char ch[4] = "";
+    while(true)
+    {
+        system("clear");
+        printf("**************************************\n");
+        printf("******   Student Operation    ********\n");
+        printf("******   Choose 1 to showstu  ********\n");
+        printf("******   Choose 2 to updates  ********\n");
+        printf("******   Choose 0 to quit     ********\n");
+        printf("**************************************\n");
+        setbuf(stdin, NULL);
+        scanf("%s", ch);
+        if(ch[0] == '0')
+            break;
+        switch(ch[0])
+        {
+            case '1':
+                show_stu(stulist->data);
+                break;
+            case '2':
+                updatestu_menu(stulist, stup);
+                break;
+            default:
+                printf("******  INPUT ERROR  ******\n");
+                break;
+        }
+    }
+    return 0;
+}
 
+int welcome_stu_menu(node_t *stulist)
+{
+    int COUNT = LOOPCOUNT;
+    char name[16] = "";
+    int passwd = 0;
+    while(COUNT)
+    {
+        system("clear");
+        printf("************** Student ****************\n");
+        printf("******  Input Username passwd ********\n");
+        printf("**************************************\n");
+        setbuf(stdin, NULL);
+        scanf("%s%d", name, &passwd);
+        //调用find_vdist 取出指定用户名和密码
+        //和输入的值做比较
+        //成功调用stu_menu()函数
+        COUNT--;
+    }
+    return 0;
+}
+
+int addstu_menu(node_t *stulist)
+{
+    system("clear");
+    int studentid = getcid();
+}

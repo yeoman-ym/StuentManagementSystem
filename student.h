@@ -3,7 +3,7 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
-#include "student.h"
+#include "dlist.h"
 
 typedef struct student
 {
@@ -20,7 +20,7 @@ typedef struct student
 }stu_t;
 
 //获取学生学号
-int getcid();
+int getcid(stu_t);
 //加载学生信息
 node_t *loadstu();
 //保存学生信息

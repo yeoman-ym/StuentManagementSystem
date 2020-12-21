@@ -3,7 +3,6 @@
 #ifndef DLIST_H
 #define DLIST_H
 
-#include "student.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -15,13 +14,13 @@
                                         }
 
 
+
 //链表节点
 typedef struct node
 {
     struct node *prev, *next;   //前驱后继
-    stu_t *data;                //学生信息 
+    void *data;                //学生信息 
 }node_t, *LinkList;
-
 typedef int (*func_find_t)(const void *data, const void*);
 
 //循环链表的创建(初始化) 无数据 ****done****

@@ -23,7 +23,7 @@ int LinkList_hInsert(LinkList head, const void *data, int size)
     //创建新节点
     node_t *p = (node_t*)malloc(sizeof(node_t));
     SYSERR(p,==,NULL,"p malloc err\n",-1);
-    p->data = (stu_t *)malloc(size);
+    p->data = (void *)malloc(size);
     if(p->data == NULL)
     {
         free(p);
@@ -51,7 +51,7 @@ int LinkList_tInsert(LinkList head, const void *data, int size)
     //创建新节点
     node_t *p = (node_t*)malloc(sizeof(node_t));
     SYSERR(p,==,NULL,"p malloc err\n",-1);
-    p->data = (stu_t *)malloc(size);
+    p->data = (void *)malloc(size);
     if(p->data == NULL)
     {
         free(p);
@@ -202,7 +202,7 @@ int LinkList_Bubble_sort(LinkList head, func_find_t funcmp)
         {
             if(funcmp(j->data, j->next->data) > 0)
             {
-                stu_t *tmp = j->data;
+                void *tmp = j->data;
                 j->data = j->next->data;
                 j->next->data = tmp;
                 flag = 1;
@@ -221,7 +221,7 @@ int LinkList_Select_sort(LinkList head, func_find_t funcmp)
     SYSERR(head->next,==,NULL,"list is empty\n",-1);
 
     node_t *i, *j;
-    stu_t *temp;
+    void *temp;
     node_t *min;
     for(i = head->next; i->next != head; i=i->next)
     {

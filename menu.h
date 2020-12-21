@@ -4,6 +4,7 @@
 #define MENU_H
 
 #include "dlist.h"
+#include "student.h"
 
 //程序主界面
 int login_menu(node_t *stulist, node_t *tchlist);
