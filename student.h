@@ -19,8 +19,8 @@ typedef struct student
     int classid;    //班号
 }stu_t;
 
-//获取学生学号
-int getcid(stu_t);
+//获取新学生学号
+int getnewcid();
 //加载学生信息
 node_t *loadstu();
 //保存学生信息
@@ -30,7 +30,7 @@ int addstu(node_t *head, stu_t stu);
 //查找学生函数
 node_t *findstu(node_t *head, int mode, stu_t stu);
 //删除学生函数
-int delstu(node_t *head, int mode, stu_t stu);
+int delstu(node_t *head, stu_t stu);
 //修改学生信息
 int updatestu(node_t *head, int mode, stu_t olddata, stu_t newdata);
 //排序学生信息
@@ -56,5 +56,7 @@ int cmp_stu_sum(const void *data1, const void *data2);
 int cmp_stu_order(const void *data1, const void *data2);
 //比较学生班号
 int cmp_stu_classid(const void *data1, const void *data2);
+//销毁学生链表
+void destroy_Linklist(node_t **stulist);
 
 #endif

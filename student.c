@@ -1,11 +1,16 @@
 #include "student.h"
 #include "common.h"
 
-//获取学生学号
-int getcid(stu_t stu)
+//获取新学生学号
+int getnewcid()
 {
-    //需要修改
-    return stu.cid;
+    int tmp_cid = 0;
+    //读取目前文件中的最大的学号
+    FILE *fp = fopen(STUFILE, "r");
+    fseek(fp, sizeof(int), SEEK_SET);
+    scanf("%d", &tmp_cid);
+    fclose(fp);
+    return tmp_cid+1;
 }
 
 //加载学生信息
@@ -103,8 +108,8 @@ int addstu(node_t *head, stu_t stu)
     printf("********************************\n");
     printf("******* Input Your phil ********\n");
     scanf("%d", &stu.gphil);
-    //获取学号
-    stu.cid = getcid(stu);
+    //获取新学号
+    stu.cid = getnewcid();
     //总分计算
     stu.gsum = stu.gmath + stu.glang + stu.gphil;
     //序号，插入之后才知道,先初始化为0
@@ -116,7 +121,7 @@ int addstu(node_t *head, stu_t stu)
 }
 
 /* **********************
- * Summary: 查找学习信息
+ * Summary: 查找学生信息
  * Parameters: head学生链表，mode 查找方式， stu单个学生
  *
  * Return: 所有学生链表，单个学生
@@ -129,24 +134,34 @@ node_t *findstu(node_t *head, int mode, stu_t stu)
     {
     case 0:
         return head;
-        break;
     case 1:
         p = LinkList_Find(head, &stu.cid, cmp_stu_cid);
         return p;
-        break;
     case 2:
-        p = LinkList_Find(head, &stu.name, cmp_stu_name);
-        show_stu(p->data);
-        break;
+        {
+            p = head;
+            node_t *nc = LinkCreate();
+            while((p = LinkList_Find(p, &stu.name, cmp_stu_name)) != NULL)
+            {
+                LinkList_tInsert(nc, p->data, sizeof(stu_t));
+            }
+            return nc;
+        }
     case 3:
-        p = LinkList_Find(head, &stu.classid, cmp_stu_classid);
-        show_stu(p->data);
-        break;
+        {
+            p = head;
+            node_t *cc = LinkCreate();
+            while((p = LinkList_Find(p, &stu.classid, cmp_stu_classid)) != NULL)
+            {
+                LinkList_tInsert(cc, p->data, sizeof(stu_t));
+            }
+            return cc;
+        }
     }
-    return p;
+    return head;
 }
 
-//删除学生函数
+//删除学生函数(多种模式删除后面再补充)
 int delstu(node_t *head, stu_t stu)
 {
     //head 学生链表头结点  stu 学生
@@ -293,4 +308,10 @@ int cmp_stu_classid(void *data1, void *data2)
     stu_t *stu1 = (stu_t*)data1;
     stu_t *stu2 = (stu_t*)data2;
     return stu1->classid - stu2->classid;
+}
+
+//销毁学生链表
+void destroy_Linklist(node_t **stulist)
+{
+    LinkList_Destory(stulist);
 }

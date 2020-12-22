@@ -11,5 +11,5 @@ int main()
     //根据程序选择是否需要将链表数据写入文件
     savestu(stulist);
     //销毁链表
-    //destroy_dlist(&stulist);
+    destroy_Linklist(&stulist);
 }

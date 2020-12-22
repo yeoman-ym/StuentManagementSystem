@@ -9,7 +9,8 @@
 #define ADMINPASS "admin"       //管理员密码
 
 #define STUFILE "student.dat"   //学生数据文件
-#define TEAFILE "teacher.dat"   //教师数据文件
+
+/* #define TEAFILE "teacher.dat"   //教师数据文件 */
 
 #endif
 
