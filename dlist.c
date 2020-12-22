@@ -241,3 +241,13 @@ int LinkList_Select_sort(LinkList head, func_find_t funcmp)
     return 0;
 }
 
+//链表求长
+int LinkList_Length(node_t *head)
+{
+    int count = 0;
+    node_t *p = head->next;
+    while(p != head)
+        count++;
+    return count;
+}
+

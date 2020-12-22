@@ -59,5 +59,7 @@ int LinkList_Select_sort(LinkList head, func_find_t funcmp);
 typedef void(*showfun_t)(const void *data);
 int LinkList_Show(node_t *head, showfun_t showfunc);
 
+//链表求长
+int LinkList_Length(node_t *head);
 #endif
 

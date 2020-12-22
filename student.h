@@ -39,22 +39,22 @@ int sortstu(node_t *head, int mode);
 int setstuorder(node_t *head);
 
 //显示学生信息
-void show_stu(void *data);
+void show_stu(const void *data);
 //比较学生学号
-int cmp_stu_cid(void *data1, void *data2);
+int cmp_stu_cid(const void *data1, const void *data2);
 //比较学生名字
-int cmp_stu_name(void *data1, void *data2);
+int cmp_stu_name(const void *data1, const void *data2);
 //比较学生数学成绩
-int cmp_stu_gmath(void *data1, void *data2);
+int cmp_stu_gmath(const void *data1, const void *data2);
 //比较学生C语言成绩
-int cmp_stu_glang(void *data1, void *data2);
+int cmp_stu_glang(const void *data1, const void *data2);
 //比较学生物理成绩
-int cmp_stu_gphil(void *data1, void *data2);
+int cmp_stu_gphil(const void *data1, const void *data2);
 //比较学生总分
-int cmp_stu_sum(void *data1, void *data2);
+int cmp_stu_sum(const void *data1, const void *data2);
 //比较学生序号
-int cmp_stu_order(void *data1, void *data2);
+int cmp_stu_order(const void *data1, const void *data2);
 //比较学生班号
-int cmp_stu_classid(void *data1, void *data2);
+int cmp_stu_classid(const void *data1, const void *data2);
 
 #endif
