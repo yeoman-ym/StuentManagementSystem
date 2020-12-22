@@ -1,4 +1,9 @@
-//菜单模块：完成菜单的显示和调用相应功能函数
+/***********************************
+ Copyright: HQYJ
+ Author: yeoman
+ Date: 2020-12-20
+ Description: 菜单模块头文件，相关函数声明
+ **********************************/
 
 #ifndef MENU_H
 #define MENU_H
@@ -22,7 +27,7 @@ int welcome_tch_menu(node_t *stulist, node_t *tchlist);
 #endif
 
 //学生操作菜单
-int stu_menu(stu_t *stup);
+int stu_menu(node_t *stulist, stu_t *stup);
 //学生登录界面
 int welcome_stu_menu(node_t *stulist);
 

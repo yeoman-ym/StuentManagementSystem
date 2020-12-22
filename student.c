@@ -1,3 +1,9 @@
+/***********************************
+ Copyright: HQYJ
+ Author: yeoman
+ Date: 2020-12-20
+ Description: 学生模块，相关函数定义
+ **********************************/
 #include "student.h"
 #include "common.h"
 
@@ -6,9 +12,14 @@ int getnewcid()
 {
     int tmp_cid = 0;
     //读取目前文件中的最大的学号
-    FILE *fp = fopen(STUFILE, "r");
+    FILE *fp = fopen(STUFILE, "a+");
+    SYSERR(fp,==,NULL,"file open err\n",-1);
     fseek(fp, sizeof(int), SEEK_SET);
-    scanf("%d", &tmp_cid);
+    if(fscanf(fp, "%d", &tmp_cid) == EOF)
+    {
+        fclose(fp);
+        return 1;
+    }
     fclose(fp);
     return tmp_cid+1;
 }
@@ -19,12 +30,17 @@ node_t *loadstu()
     LinkList head = LinkCreate();
     SYSERR(head,==,NULL,"STU load data error\n",NULL);
 
-    FILE *fp = fopen(STUFILE, "r");
+    FILE *fp = fopen(STUFILE, "a+");
     SYSERR(fp,==,NULL,"Student file open err\n",NULL);
 
     int people_num;                     //存放读取出来的人数
     int max_num;                        //存放文件的最大编号
-    fscanf(fp, "%d\t%d\n", &people_num, &max_num);
+    if(fscanf(fp, "%d\t%d\n", &people_num, &max_num) == EOF)
+    {
+        //如果文件数据为空，关闭文件，返回头结点
+        fclose(fp);
+        return head;
+    }
 
     //循环从文件读取每个学生数据插入到链表
     stu_t *tmp = (stu_t *)malloc(sizeof(stu_t));
@@ -79,7 +95,6 @@ int savestu(node_t *head)
 int addstu(node_t *head, stu_t stu)
 {
     //需要学生输入的数据有七个，其他自动生成
-    SYSERR(head,==,NULL,"head is null\n",-1);
     system("clear");
     printf("********************************\n");
     printf("******* Input Your name ********\n");
@@ -171,23 +186,40 @@ int delstu(node_t *head, stu_t stu)
 //修改学生信息
 int updatestu(node_t *head, int mode, stu_t olddata, stu_t newdata)
 {
+    node_t *p;          //临时存放找到的节点
     //1,修改名字2，修改数学成绩3，修改C成绩4，修改物理成绩，5，修改班号
     switch(mode)
     {
         case 1:
-            LinkList_update(head, &olddata, &newdata, sizeof(stu_t), cmp_stu_name);
+            //通过olddata.name 找到节点
+            p = LinkList_Find(head, olddata.name, cmp_stu_name);
+            SYSERR(p,==,NULL,"Not found \n",-1);
+            //修改节点赋值给新节点
+            strcpy(((stu_t *)p->data)->name,newdata.name);
+            //修改链表中的数据
+            LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_name);
             break;
         case 2:
-            LinkList_update(head, &olddata, &newdata, sizeof(stu_t), cmp_stu_gmath);
+            //通过ID 找到该学生节点
+            p = LinkList_Find(head, &olddata.cid, cmp_stu_cid);
+            //修改该节点的数学成绩
+            ((stu_t*)p->data)->gmath = newdata.gmath;
+            LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_gmath);
             break;
         case 3:
-            LinkList_update(head, &olddata, &newdata, sizeof(stu_t), cmp_stu_glang);
+            p = LinkList_Find(head, &olddata.cid, cmp_stu_cid);
+            ((stu_t*)p->data)->glang = newdata.glang;
+            LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_glang);
             break;
         case 4:
-            LinkList_update(head, &olddata, &newdata, sizeof(stu_t), cmp_stu_gphil);
+            p = LinkList_Find(head, &olddata.cid, cmp_stu_cid);
+            ((stu_t*)p->data)->gphil = newdata.gphil;
+            LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_gphil);
             break;
         case 5:
-            LinkList_update(head, &olddata, &newdata, sizeof(stu_t), cmp_stu_classid);
+            p = LinkList_Find(head, &olddata.cid, cmp_stu_cid);
+            ((stu_t*)p->data)->classid = newdata.classid;            
+            LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_classid);
             break;
         default:
             printf("*****  The mode is not exist  *****\n");
@@ -260,42 +292,42 @@ int cmp_stu_cid(const void *data1, const void *data2)
     return stu1->cid - stu2->cid;
 }
 //比较学生名字
-int cmp_stu_name(void *data1, void *data2)
+int cmp_stu_name(const void *data1, const void *data2)
 {
     stu_t *stu1 = (stu_t*)data1;
     stu_t *stu2 = (stu_t*)data2;
     return stu1->name - stu2->name;
 }
 //比较学生数学成绩
-int cmp_stu_gmath(void *data1, void *data2)
+int cmp_stu_gmath(const void *data1, const void *data2)
 {
     stu_t *stu1 = (stu_t*)data1;
     stu_t *stu2 = (stu_t*)data2;
     return stu1->gmath - stu2->gmath;
 }
 //比较学生C语言成绩
-int cmp_stu_glang(void *data1, void *data2)
+int cmp_stu_glang(const void *data1, const void *data2)
 {
     stu_t *stu1 = (stu_t*)data1;
     stu_t *stu2 = (stu_t*)data2;
     return stu1->glang - stu2->glang;
 }
 //比较学生物理成绩
-int cmp_stu_gphil(void *data1, void *data2)
+int cmp_stu_gphil(const void *data1, const void *data2)
 {
     stu_t *stu1 = (stu_t*)data1;
     stu_t *stu2 = (stu_t*)data2;
     return stu1->gphil - stu2->gphil;
 }
 //比较学生总分
-int cmp_stu_sum(void *data1, void *data2)
+int cmp_stu_sum(const void *data1, const void *data2)
 {
     stu_t *stu1 = (stu_t*)data1;
     stu_t *stu2 = (stu_t*)data2;
     return stu1->gsum - stu2->gsum;
 }
 //比较学生序号
-int cmp_stu_order(void *data1, void *data2)
+int cmp_stu_order(const void *data1, const void *data2)
 {
     stu_t *stu1 = (stu_t*)data1;
     stu_t *stu2 = (stu_t*)data2;
@@ -303,7 +335,7 @@ int cmp_stu_order(void *data1, void *data2)
 }
 
 //比较学生班号
-int cmp_stu_classid(void *data1, void *data2)
+int cmp_stu_classid(const void *data1, const void *data2)
 {
     stu_t *stu1 = (stu_t*)data1;
     stu_t *stu2 = (stu_t*)data2;

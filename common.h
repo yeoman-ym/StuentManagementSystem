@@ -1,7 +1,18 @@
-//公共相关数据
+/***********************************
+ Copyright: HQYJ
+ Author: yeoman
+ Date: 2020-12-20
+ Description: 公共数据
+ **********************************/
 
 #ifndef COMMON_H
 #define COMMON_H
+
+#include <sys/stat.h>
+#include <unistd.h>
+
+#define true 1
+#define false 0
 
 #define LOOPCOUNT 3             //错误次数
 

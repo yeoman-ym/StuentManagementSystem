@@ -1,4 +1,9 @@
-//学生相关数据
+/***********************************
+ Copyright: HQYJ
+ Author: yeoman
+ Date: 2020-12-20
+ Description: 学生模块头文件，相关函数声明
+ **********************************/
 
 #ifndef STUDENT_H
 #define STUDENT_H

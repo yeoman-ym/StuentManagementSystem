@@ -259,7 +259,7 @@ int welcome_tch_menu(node_t *stulist, node_t *tchlist)
  * Return: 
  * Others:
  * *********************/
-int stu_menu(stu_t *stup)
+int stu_menu(node_t *stulist, stu_t *stup)
 {
     char ch[4] = "";
     while(true)
@@ -281,7 +281,7 @@ int stu_menu(stu_t *stup)
                 show_stu(stup);
                 break;
             case '2':
-                updatestu_menu(stup);
+                updatestu_menu(stulist);
                 break;
             default:
                 system("clear");
@@ -333,7 +333,7 @@ int welcome_stu_menu(node_t *stulist)
         {
             if(strcmp(stu_pass, stup->pass) == 0)
             {
-                stu_menu(stup);
+                stu_menu(stulist,stup);
             }
             else
             {
@@ -378,8 +378,13 @@ int addstu_menu(node_t *stulist)
     printf("**************************************\n");
     printf("******  Add Student Menu      ********\n");
     printf("**************************************\n");
-    stu_t newstu;
-    addstu(stulist, newstu);
+    putchar('\n');
+    putchar('\n');
+    putchar('\n');
+    getchar();
+    getchar();
+    stu_t *newstu = (stu_t*)malloc(sizeof(stu_t));
+    addstu(stulist, *newstu);
     return 0;
 }
 
@@ -437,9 +442,43 @@ int updatestu_menu(node_t *stulist)
             scanf("%s", tmp_olddata.name);
             printf("******  Input New Name Data  ********\n");
             scanf("%s", tmp_newdata.name);            
-            //通过旧值找到学生节点
-            //调用updatestu 更新
+            //新值覆盖旧值
+            updatestu(stulist, num, tmp_olddata, tmp_newdata);        
+            break;
+        case 2:
+            printf("******  Input Student ID     ********\n");
+            scanf("%d", &tmp_olddata.cid);
+            printf("******  Input New Math Data  ********\n");
+            scanf("%d", &tmp_newdata.gmath);            
+            //新值覆盖旧值
+            updatestu(stulist, num, tmp_olddata, tmp_newdata);        
+            break;
+        case 3:
+            printf("******  Input Student ID     ********\n");
+            scanf("%d", &tmp_olddata.cid);
+            printf("******  Input New Clang Data ********\n");
+            scanf("%d", &tmp_newdata.glang);            
+            //新值覆盖旧值
+            updatestu(stulist, num, tmp_olddata, tmp_newdata);        
+            break;
+        case 4:
+            printf("******  Input Student ID     ********\n");
+            scanf("%d", &tmp_olddata.cid);
+            printf("******  Input New Phily Data ********\n");
+            scanf("%d", &tmp_newdata.gphil);            
+            //新值覆盖旧值
+            updatestu(stulist, num, tmp_olddata, tmp_newdata);        
+            break;
+        case 5:
+            printf("******  Input Student ID     ********\n");
+            scanf("%d", &tmp_olddata.cid);
+            printf("******  Input New Class Data ********\n");
+            scanf("%d", &tmp_newdata.classid);            
+            //新值覆盖旧值
+            updatestu(stulist, num, tmp_olddata, tmp_newdata);        
+            break;
     }
+    return 0;
 }
 
 /* **********************
@@ -491,19 +530,41 @@ int findstu_menu(node_t *stulist)
     setbuf(stdin, NULL);
     scanf("%d", &mode);
     stu_t stu;      //存储临时值
+    node_t *p;      //存储得到的链表节点
     //按模式返回对于的信息
     switch(mode)
     {
         case 0:
-            node_t *p = findstu(stulist, mode, stu);
+            p = findstu(stulist, mode, stu);
             LinkList_Show(p, show_stu);
             break;
         case 1:
             {
                 printf("*****  Input Cid  *****\n");
                 scanf("%d", &stu.cid);
-                findstu(stulist, mode, stu);
+                p = findstu(stulist, mode, stu);
+                show_stu(p->data);
                 break;
             }
+        case 2:
+            {
+                printf("*****  Input Name  *****\n");
+                scanf("%s", stu.name);
+                p = findstu(stulist, mode, stu);
+                LinkList_Show(p, show_stu);
+                break;
+            }
+        case 3:
+            {
+                printf("*****  Input Class  ****\n");
+                scanf("%d", &stu.classid);
+                p = findstu(stulist, mode, stu);
+                LinkList_Show(p, show_stu);
+                break;
+            }
+        default:
+            printf("*******  The mode error  *******\n");
+            break;
     }
+    return 0;
 }
