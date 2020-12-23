@@ -4,17 +4,26 @@
  Date: 2020-12-20
  Description: 学生模块，相关函数定义
  **********************************/
+
 #include "student.h"
 #include "common.h"
 
-//获取新学生学号
+/* ******************************************
+ * Summary: 获取新的学号给新添加的学生
+ * Parameters: 学生链表头结点
+ * Calls: LinkList_Length 
+ * Return: 返回新的学号数
+ * Others: 从文件中获取最大的学号，链表最大人数，两种取最大值
+ * ******************************************/
 int getnewcid(node_t *head)
 {
     int tmp_cid = 0;
     //读取目前文件中的最大的学号
     FILE *fp = fopen(STUFILE, "a+");
     SYSERR(fp,==,NULL,"file open err\n",-1);
+    //跳过一个数，取出上次文件中最大的编号
     fseek(fp, sizeof(int), SEEK_SET);
+
     if(fscanf(fp, "%d", &tmp_cid) == EOF)
     {
         fclose(fp);
@@ -23,13 +32,17 @@ int getnewcid(node_t *head)
     fclose(fp);
 
     int length = LinkList_Length(head);
-    if(tmp_cid >= length)
-        return tmp_cid+1;
-    else
-        return length+1;
+
+    return tmp_cid >= length ? tmp_cid+1 : length+1;
 }
 
-//加载学生信息
+/* ******************************************
+ * Summary: 从文件中读取数据存放到链表
+ * Parameters: void
+ * Calls: LinkList_hInsert  
+ * Return: 存有数据的链表头结点
+ * Others: 文件为空，直接返回头，有数据则循环读数据插入链表
+ * ******************************************/
 node_t *loadstu()
 {
     LinkList head = LinkCreate();
@@ -62,7 +75,14 @@ node_t *loadstu()
     fclose(fp);
     return head;
 }
-//保存学生信息
+
+/* ******************************************
+ * Summary: 将链表数据保存到文件中
+ * Parameters: 学生数据链表
+ * Calls: LinkList_Length  LinkList_Select_sort  
+ * Return: 成功返回0 
+ * Others: 
+ * ******************************************/
 int savestu(node_t *head)
 {
     SYSERR(head,==,NULL,"head is null\n",-1);
@@ -94,42 +114,42 @@ int savestu(node_t *head)
     return 0;
 }
 
-/* **********************
+/* ******************************************************
  * Summary: 添加学生信息
- * Parameters:
- *
- * Return:
+ * Parameters: 学生数据链表， 学生结构体指针
+ * Calls: getnewcid LinkList_hInsert setstuorder 
+ * Return: 成功返回0
  * Others: 提示学生输入姓名，密码，年龄，班级，数学成绩等
- * *********************/
+ * ******************************************************/
 int addstu(node_t *head, stu_t *stup)
 {
     //需要学生输入的数据有七个，其他自动生成
-    printf("********************************\n");
-    printf("******* Input Your name ********\n");
+    printf("\t\t\t\t\t********************************\n");
+    printf("\t\t\t\t\t******* Input Your name ********\n");
     scanf("%s", stup->name);
     putchar('\n');
-    printf("********************************\n");
-    printf("******* Input Your passwd ******\n");
+    printf("\t\t\t\t\t********************************\n");
+    printf("\t\t\t\t\t******* Input Your passwd ******\n");
     scanf("%s", stup->pass);
     putchar('\n');
-    printf("********************************\n");
-    printf("******* Input Your age *********\n");
+    printf("\t\t\t\t\t********************************\n");
+    printf("\t\t\t\t\t******* Input Your age *********\n");
     scanf("%d", &stup->age);
     putchar('\n');
-    printf("********************************\n");
-    printf("******* Input Your class *******\n");
+    printf("\t\t\t\t\t********************************\n");
+    printf("\t\t\t\t\t******* Input Your class *******\n");
     scanf("%d", &stup->classid);
     putchar('\n');
-    printf("********************************\n");
-    printf("******* Input Your math ********\n");
+    printf("\t\t\t\t\t********************************\n");
+    printf("\t\t\t\t\t******* Input Your math ********\n");
     scanf("%d", &stup->gmath);
     putchar('\n');
-    printf("********************************\n");
-    printf("******* Input Your C lan *******\n");
+    printf("\t\t\t\t\t********************************\n");
+    printf("\t\t\t\t\t******* Input Your C lan *******\n");
     scanf("%d", &stup->glang);
     putchar('\n');
-    printf("********************************\n");
-    printf("******* Input Your phil ********\n");
+    printf("\t\t\t\t\t********************************\n");
+    printf("\t\t\t\t\t******* Input Your phil ********\n");
     scanf("%d", &stup->gphil);
     putchar('\n');
     //获取新学号
@@ -144,13 +164,13 @@ int addstu(node_t *head, stu_t *stup)
     return 0;
 }
 
-/* **********************
+/* *****************************************************
  * Summary: 查找学生信息
  * Parameters: head学生链表，mode 查找方式， stu单个学生
- *
+ * Calls: LinkList_Find LinkCreate LinkList_hInsert 
  * Return: 所有学生链表，单个学生
  * Others: 0全部获取，1，按学号获取 2，姓名获取(多值查找)，3，班级获取（多值查找） 
- * *********************/
+ * *****************************************************/
 node_t *findstu(node_t *head, int mode, stu_t *stu)
 {
     node_t *p;
@@ -164,7 +184,7 @@ node_t *findstu(node_t *head, int mode, stu_t *stu)
     case 2:
         {
             p = head;
-            node_t *nc = LinkCreate();
+            node_t *nc = LinkCreate();          //所有同名的学生插入新链表nc
             while((p = LinkList_Find(p, stu, cmp_stu_name)) != NULL)
             {
                 LinkList_tInsert(nc, p->data, sizeof(stu_t));
@@ -174,7 +194,7 @@ node_t *findstu(node_t *head, int mode, stu_t *stu)
     case 3:
         {
             p = head;
-            node_t *cc = LinkCreate();
+            node_t *cc = LinkCreate();          //所有同班级的插入新链表cc
             while((p = LinkList_Find(p, stu, cmp_stu_classid)) != NULL)
             {
                 LinkList_tInsert(cc, p->data, sizeof(stu_t));
@@ -185,18 +205,32 @@ node_t *findstu(node_t *head, int mode, stu_t *stu)
     return head;
 }
 
-//删除学生函数(多种模式删除后面再补充)
+/* ******************************************
+ * Summary: 删除学生数据
+ * Parameters: 学生数据链表，需要删除的学生
+ * Calls: LinkList_vdelete 
+ * Return: 成功返回0
+ * Others: 
+ * ******************************************/
 int delstu(node_t *head, stu_t stu)
 {
     //head 学生链表头结点  stu 学生
     LinkList_vdelete(head, &stu.cid, cmp_stu_cid);
     return 0;
 }
-//修改学生信息
+
+/* *****************************************************************
+ * Summary: 更新学生数据
+ * Parameters: 学生数据链表head，模式mode，旧结构体数据，新结构体数据
+ * Calls: LinkList_Find LinkList_update    
+ * Return: 成功返回0
+ * Others: 名字先找后改，其他的先找学号，再改数据
+ * 1,修改名字2，修改数学成绩3，修改C成绩4，修改物理成绩，5，修改班号
+ * *****************************************************************/
 int updatestu(node_t *head, int mode, stu_t olddata, stu_t newdata)
 {
-    node_t *p;          //临时存放找到的节点
-    //1,修改名字2，修改数学成绩3，修改C成绩4，修改物理成绩，5，修改班号
+    node_t *p;                                  //临时存放找到的节点
+
     switch(mode)
     {
         case 1:
@@ -243,10 +277,16 @@ int updatestu(node_t *head, int mode, stu_t olddata, stu_t newdata)
     }
     return 0;
 }
-//排序学生信息
+
+/* ******************************************
+ * Summary: 学生信息排序
+ * Parameters: 学生数据链表，模式
+ * Calls: LinkList_Bubble_sort  
+ * Return: 成功返回0
+ * Others: 1,学号排序2,数学成绩排序3,C语言成绩排序4,物理成绩排序5,总分排序
+ * ******************************************/
 int sortstu(node_t *head, int mode)
 {
-    //1,学号排序2,数学成绩排序3,C语言成绩排序4,物理成绩排序5,总分排序
     switch(mode)
     {
         case 1:
@@ -265,13 +305,25 @@ int sortstu(node_t *head, int mode)
             LinkList_Bubble_sort(head, cmp_stu_sum);
             break;
         default:
-            printf("*****  The mode is not exist  *****\n");
+            printf("\t\t\t\t\t*****  The mode is not exist  *****\n");
+            putchar('\n');
+            putchar('\n');
+            putchar('\n');
+            printf("\t\t\t\t\t*********   Enter to continue  **********\n");
+            getchar();
+            getchar();
             break;
     }
     return 0;
 }
 
-//修改学生信息(学生模式)
+/* ******************************************
+ * Summary: 从修改学生信息(学生模式)
+ * Parameters: 学生数据链表，模式，学生节点
+ * Calls: LinkList_update 
+ * Return: 成功返回0
+ * Others: 1名字2年龄3数学4C语言5物理6班号
+ * ******************************************/
 int updatestu_s(node_t *head, int mode, node_t *stup)
 {
     node_t* newnode = (node_t*)malloc(sizeof(node_t));
@@ -283,27 +335,27 @@ int updatestu_s(node_t *head, int mode, node_t *stup)
     switch(mode)
     {
         case 1:
-            printf("***********  Input Your Name  **********\n");
+            printf("\t\t\t\t\t***********  Input Your Name  **********\n");
             scanf("%s", stu->name);
             break;
         case 2:
-            printf("***********  Input Your Age   **********\n");
+            printf("\t\t\t\t\t***********  Input Your Age   **********\n");
             scanf("%d", &stu->age);
             break;
         case 3:
-            printf("***********  Input Your Math  **********\n");
+            printf("\t\t\t\t\t***********  Input Your Math  **********\n");
             scanf("%d", &stu->gmath);
             break;
         case 4:
-            printf("***********  Input Your Clang  *********\n");
+            printf("\t\t\t\t\t***********  Input Your Clang  *********\n");
             scanf("%d", &stu->glang);
             break;
         case 5:
-            printf("***********  Input Your Phily **********\n");
+            printf("\t\t\t\t\t***********  Input Your Phily **********\n");
             scanf("%d", &stu->gphil);
             break;
         case 6:
-            printf("***********  Input Your Clas  **********\n");
+            printf("\t\t\t\t\t***********  Input Your Clas  **********\n");
             scanf("%d", &stu->classid);
             break;
     }
@@ -315,7 +367,13 @@ int updatestu_s(node_t *head, int mode, node_t *stup)
     return 0;
 }
 
-//设置学生序号
+/* ******************************************
+ * Summary: 设置学生序号
+ * Parameters: 学生数据链表
+ * Calls:  
+ * Return: 成功返回0
+ * Others: 在添加学生，排序时结束后，设置序号
+ * ******************************************/
 int setstuorder(node_t *head)
 {
     int count = 0;
@@ -330,29 +388,43 @@ int setstuorder(node_t *head)
     return 0;
 }
 
-//显示学生信息
+/* ******************************************
+ * Summary: 显示学生信息
+ * Parameters: 学生链表单个节点的数据
+ * Calls:   
+ * Return: 存有数据的链表头结点
+ * Others: 
+ * ******************************************/
 void show_stu(const void *data)
 {
     stu_t *stu = (stu_t*)data;
-    printf("*****  cid  is %6d  *****\n", stu->cid);
-    printf("*****  name is %6s  *****\n", stu->name);
-    printf("*****  pass is %6s  *****\n", stu->pass);
-    printf("*****  age  is %6d  *****\n", stu->age);
-    printf("*****  math is %6d  *****\n", stu->gmath);
-    printf("*****  lang is %6d  *****\n", stu->glang);
-    printf("*****  phil is %6d  *****\n", stu->gphil);
-    printf("*****  sum  is %6d  *****\n", stu->gsum);
-    printf("*****  orde is %6d  *****\n", stu->order);
-    printf("*****  clas is %6d  *****\n", stu->classid);
+    printf("\t\t\t\t\t*****  cid  is %6d  *****\n", stu->cid);
+    printf("\t\t\t\t\t*****  name is %6s  *****\n", stu->name);
+    printf("\t\t\t\t\t*****  pass is %6s  *****\n", stu->pass);
+    printf("\t\t\t\t\t*****  age  is %6d  *****\n", stu->age);
+    printf("\t\t\t\t\t*****  math is %6d  *****\n", stu->gmath);
+    printf("\t\t\t\t\t*****  lang is %6d  *****\n", stu->glang);
+    printf("\t\t\t\t\t*****  phil is %6d  *****\n", stu->gphil);
+    printf("\t\t\t\t\t*****  sum  is %6d  *****\n", stu->gsum);
+    printf("\t\t\t\t\t*****  orde is %6d  *****\n", stu->order);
+    printf("\t\t\t\t\t*****  clas is %6d  *****\n", stu->classid);
     putchar('\n');
 }
-//比较学生学号
+
+/* ******************************************
+ * Summary : 学号比较
+ * Parameters: void*,void*
+ * Calls: void   
+ * Return: 数据比较
+ * Others: 后面的一致
+ * ******************************************/
 int cmp_stu_cid(const void *data1, const void *data2)
 {
     stu_t *stu1 = (stu_t*)data1;
     stu_t *stu2 = (stu_t*)data2;
     return stu1->cid - stu2->cid;
 }
+
 //比较学生名字
 int cmp_stu_name(const void *data1, const void *data2)
 {
@@ -360,6 +432,7 @@ int cmp_stu_name(const void *data1, const void *data2)
     stu_t *stu2 = (stu_t*)data2;
     return strcmp(stu1->name,stu2->name);
 }
+
 //比较学生数学成绩
 int cmp_stu_gmath(const void *data1, const void *data2)
 {
@@ -367,6 +440,7 @@ int cmp_stu_gmath(const void *data1, const void *data2)
     stu_t *stu2 = (stu_t*)data2;
     return stu1->gmath - stu2->gmath;
 }
+
 //比较学生C语言成绩
 int cmp_stu_glang(const void *data1, const void *data2)
 {
@@ -374,6 +448,7 @@ int cmp_stu_glang(const void *data1, const void *data2)
     stu_t *stu2 = (stu_t*)data2;
     return stu1->glang - stu2->glang;
 }
+
 //比较学生物理成绩
 int cmp_stu_gphil(const void *data1, const void *data2)
 {
@@ -381,6 +456,7 @@ int cmp_stu_gphil(const void *data1, const void *data2)
     stu_t *stu2 = (stu_t*)data2;
     return stu1->gphil - stu2->gphil;
 }
+
 //比较学生总分
 int cmp_stu_sum(const void *data1, const void *data2)
 {
@@ -388,6 +464,7 @@ int cmp_stu_sum(const void *data1, const void *data2)
     stu_t *stu2 = (stu_t*)data2;
     return stu1->gsum - stu2->gsum;
 }
+
 //比较学生序号
 int cmp_stu_order(const void *data1, const void *data2)
 {
@@ -404,7 +481,13 @@ int cmp_stu_classid(const void *data1, const void *data2)
     return stu1->classid - stu2->classid;
 }
 
-//销毁学生链表
+/* ******************************************
+ * Summary: 销毁链表，释放内存
+ * Parameters: 学生数据链表
+ * Calls: LinkList_Destory 
+ * Return: 
+ * Others: 
+ * ******************************************/
 void destroy_Linklist(node_t **stulist)
 {
     LinkList_Destory(stulist);

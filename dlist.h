@@ -1,9 +1,9 @@
-/***********************************
+/*********************************************
  Copyright: HQYJ
  Author: yeoman
  Date: 2020-12-20
  Description: 双向循环链表头文件，相关函数声明
- **********************************/
+ *********************************************/
 
 #ifndef DLIST_H
 #define DLIST_H
@@ -20,13 +20,15 @@
 
 
 
-//链表节点
+//双向循环链表结构体节点定义
 typedef struct node
 {
-    struct node *prev, *next;   //前驱后继
-    void *data;                //学生信息 
-}node_t, *LinkList;
-typedef int (*func_find_t)(const void *data, const void*);
+    struct node *prev, *next;       //前驱后继
+    void *data;                     //学生信息(可以存储任意类型的数据，使用时记得类型强转) 
+}node_t, *LinkList;                 //note_t* LinkList没有区别，node_t用于节点，LinkList 用于链表头
+
+//函数指针别名，具体比较需要自定义
+typedef int (*func_find_t)(const void *, const void*);
 
 //循环链表的创建(初始化) 无数据 ****done****
 LinkList LinkCreate();
@@ -66,5 +68,6 @@ int LinkList_Show(node_t *head, showfun_t showfunc);
 
 //链表求长
 int LinkList_Length(node_t *head);
+
 #endif
 
