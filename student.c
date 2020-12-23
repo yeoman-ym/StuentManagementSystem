@@ -8,7 +8,7 @@
 #include "common.h"
 
 //获取新学生学号
-int getnewcid()
+int getnewcid(node_t *head)
 {
     int tmp_cid = 0;
     //读取目前文件中的最大的学号
@@ -21,7 +21,12 @@ int getnewcid()
         return 1;
     }
     fclose(fp);
-    return tmp_cid+1;
+
+    int length = LinkList_Length(head);
+    if(tmp_cid >= length)
+        return tmp_cid+1;
+    else
+        return length+1;
 }
 
 //加载学生信息
@@ -128,7 +133,7 @@ int addstu(node_t *head, stu_t *stup)
     scanf("%d", &stup->gphil);
     putchar('\n');
     //获取新学号
-    stup->cid = getnewcid();
+    stup->cid = getnewcid(head);
     //总分计算
     stup->gsum = stup->gmath + stup->glang + stup->gphil;
     //序号，插入之后才知道,先初始化为0

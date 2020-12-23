@@ -25,7 +25,7 @@ typedef struct student
 }stu_t;
 
 //获取新学生学号
-int getnewcid();
+int getnewcid(node_t *head);
 //加载学生信息
 node_t *loadstu();
 //保存学生信息
