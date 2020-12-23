@@ -206,7 +206,7 @@ int LinkList_Bubble_sort(LinkList head, func_find_t funcmp)
         flag = 0;
         for(j = head->next; j->next != end; j = j->next)
         {
-            if(funcmp(j->data, j->next->data) > 0)
+            if(funcmp(j->data, j->next->data) < 0)
             {
                 void *tmp = j->data;
                 j->data = j->next->data;

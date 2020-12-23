@@ -30,7 +30,7 @@ node_t *loadstu()
     LinkList head = LinkCreate();
     SYSERR(head,==,NULL,"STU load data error\n",NULL);
 
-    FILE *fp = fopen(STUFILE, "r");
+    FILE *fp = fopen(STUFILE, "a+");
     SYSERR(fp,==,NULL,"Student file open err\n",NULL);
 
     int people_num;                     //存放读取出来的人数
@@ -48,7 +48,7 @@ node_t *loadstu()
     bzero(tmp, sizeof(stu_t));
     for(int i = 1; i <= people_num; i++)
     {
-        fscanf(fp, "%d %s %s %d %d %d %d %d %d %d\n", &tmp->cid, tmp->name, tmp->pass, \
+        fscanf(fp, "%3d%8s%8s%4d%4d%4d%4d%4d%4d%4d\n", &tmp->cid, tmp->name, tmp->pass, \
                &tmp->age, &tmp->gmath, &tmp->glang, &tmp->gphil, &tmp->gsum, &tmp->order,\
                &tmp->classid);
         LinkList_hInsert(head, tmp, sizeof(stu_t));
@@ -79,7 +79,7 @@ int savestu(node_t *head)
     node_t *p = head->next;
     while(p != head)
     {
-        fprintf(fp, "%d %s %s %d %d %d %d %d %d %d\n", ((stu_t*)p->data)->cid, ((stu_t *)p->data)->name, ((stu_t*)p->data)->pass, \
+        fprintf(fp, "%3d%8s%8s%4d%4d%4d%4d%4d%4d%4d\n", ((stu_t*)p->data)->cid, ((stu_t *)p->data)->name, ((stu_t*)p->data)->pass, \
                ((stu_t*)p->data)->age, ((stu_t*)p->data)->gmath, ((stu_t*)p->data)->glang, ((stu_t*)p->data)->gphil,\
                ((stu_t*)p->data)->gsum, ((stu_t*)p->data)->order,\
                ((stu_t*)p->data)->classid);
@@ -146,7 +146,7 @@ int addstu(node_t *head, stu_t *stup)
  * Return: 所有学生链表，单个学生
  * Others: 0全部获取，1，按学号获取 2，姓名获取(多值查找)，3，班级获取（多值查找） 
  * *********************/
-node_t *findstu(node_t *head, int mode, stu_t stu)
+node_t *findstu(node_t *head, int mode, stu_t *stu)
 {
     node_t *p;
     switch(mode)
@@ -154,13 +154,13 @@ node_t *findstu(node_t *head, int mode, stu_t stu)
     case 0:
         return head;
     case 1:
-        p = LinkList_Find(head, &stu.cid, cmp_stu_cid);
+        p = LinkList_Find(head, stu, cmp_stu_cid);
         return p;
     case 2:
         {
             p = head;
             node_t *nc = LinkCreate();
-            while((p = LinkList_Find(p, &stu.name, cmp_stu_name)) != NULL)
+            while((p = LinkList_Find(p, stu, cmp_stu_name)) != NULL)
             {
                 LinkList_tInsert(nc, p->data, sizeof(stu_t));
             }
@@ -170,7 +170,7 @@ node_t *findstu(node_t *head, int mode, stu_t stu)
         {
             p = head;
             node_t *cc = LinkCreate();
-            while((p = LinkList_Find(p, &stu.classid, cmp_stu_classid)) != NULL)
+            while((p = LinkList_Find(p, stu, cmp_stu_classid)) != NULL)
             {
                 LinkList_tInsert(cc, p->data, sizeof(stu_t));
             }
@@ -208,16 +208,23 @@ int updatestu(node_t *head, int mode, stu_t olddata, stu_t newdata)
             p = LinkList_Find(head, &olddata.cid, cmp_stu_cid);
             //修改该节点的数学成绩
             ((stu_t*)p->data)->gmath = newdata.gmath;
+            //更新总分
+            ((stu_t*)p->data)->gsum = ((stu_t*)p->data)->gmath + ((stu_t*)p->data)->glang + ((stu_t*)p->data)->gphil;
+            //更新链表
             LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_gmath);
             break;
         case 3:
             p = LinkList_Find(head, &olddata.cid, cmp_stu_cid);
             ((stu_t*)p->data)->glang = newdata.glang;
+            //更新总分
+            ((stu_t*)p->data)->gsum = ((stu_t*)p->data)->gmath + ((stu_t*)p->data)->glang + ((stu_t*)p->data)->gphil;
             LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_glang);
             break;
         case 4:
             p = LinkList_Find(head, &olddata.cid, cmp_stu_cid);
             ((stu_t*)p->data)->gphil = newdata.gphil;
+            //更新总分
+            ((stu_t*)p->data)->gsum = ((stu_t*)p->data)->gmath + ((stu_t*)p->data)->glang + ((stu_t*)p->data)->gphil;
             LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_gphil);
             break;
         case 5:
@@ -258,6 +265,51 @@ int sortstu(node_t *head, int mode)
     }
     return 0;
 }
+
+//修改学生信息(学生模式)
+int updatestu_s(node_t *head, int mode, node_t *stup)
+{
+    node_t* newnode = (node_t*)malloc(sizeof(node_t));
+    SYSERR(newnode,==,NULL,"malloc err\n",-1);
+
+    memcpy(newnode, stup, sizeof(node_t));
+    stu_t *stu = (stu_t*)newnode->data;
+
+    switch(mode)
+    {
+        case 1:
+            printf("***********  Input Your Name  **********\n");
+            scanf("%s", stu->name);
+            break;
+        case 2:
+            printf("***********  Input Your Age   **********\n");
+            scanf("%d", &stu->age);
+            break;
+        case 3:
+            printf("***********  Input Your Math  **********\n");
+            scanf("%d", &stu->gmath);
+            break;
+        case 4:
+            printf("***********  Input Your Clang  *********\n");
+            scanf("%d", &stu->glang);
+            break;
+        case 5:
+            printf("***********  Input Your Phily **********\n");
+            scanf("%d", &stu->gphil);
+            break;
+        case 6:
+            printf("***********  Input Your Clas  **********\n");
+            scanf("%d", &stu->classid);
+            break;
+    }
+    //更新总分
+    stu->gsum = stu->gmath + stu->glang + stu->gphil;
+    //通过cid找到要修改的学生的节点
+    LinkList_update(head, stup->data, newnode->data, sizeof(stu_t), cmp_stu_cid);
+    
+    return 0;
+}
+
 //设置学生序号
 int setstuorder(node_t *head)
 {
@@ -276,7 +328,7 @@ int setstuorder(node_t *head)
 //显示学生信息
 void show_stu(const void *data)
 {
-    const stu_t *stu = (stu_t*)data;
+    stu_t *stu = (stu_t*)data;
     printf("*****  cid  is %6d  *****\n", stu->cid);
     printf("*****  name is %6s  *****\n", stu->name);
     printf("*****  pass is %6s  *****\n", stu->pass);

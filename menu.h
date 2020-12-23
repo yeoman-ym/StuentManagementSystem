@@ -35,8 +35,10 @@ int welcome_stu_menu(node_t *stulist);
 int addstu_menu(node_t *stulist);
 //删除学生菜单
 int deletestu_menu(node_t *stulist);
-//修改学生菜单
+//修改学生菜单(管理模式)
 int updatestu_menu(node_t *stulist);
+//修改学生菜单(学生模式)
+int updatastu_smenu(node_t *stulist, node_t *stup);
 //显示学生菜单
 int showstu_menu(node_t *stulist);
 //查找学生菜单

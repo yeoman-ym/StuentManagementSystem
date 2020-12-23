@@ -33,11 +33,13 @@ int savestu(node_t *head);
 //添加学生信息
 int addstu(node_t *head, stu_t *stup);
 //查找学生函数
-node_t *findstu(node_t *head, int mode, stu_t stu);
+node_t *findstu(node_t *head, int mode, stu_t *stu);
 //删除学生函数
 int delstu(node_t *head, stu_t stu);
-//修改学生信息
+//修改学生信息(管理员模式)
 int updatestu(node_t *head, int mode, stu_t olddata, stu_t newdata);
+//修改学生信息(学生模式)
+int updatestu_s(node_t *head, int mode, node_t *stup);
 //排序学生信息
 int sortstu(node_t *head, int mode);
 //设置学生序号

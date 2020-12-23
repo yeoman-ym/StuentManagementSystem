@@ -291,7 +291,7 @@ int stu_menu(node_t *stulist, node_t *stup)
                 getchar();
                 break;
             case '2':
-                updatestu_menu(stulist);
+                updatastu_smenu(stulist, stup);
                 break;
             default:
                 system("clear");
@@ -499,6 +499,32 @@ int updatestu_menu(node_t *stulist)
 }
 
 /* **********************
+ * Summary: 修改学生菜单(学生模式) 
+ * Parameters: 学生数据链表stulist, 登录时获得的学生节点stup
+ * Call: LinkList_update() 
+ * Return: 成功返回0 失败返回非0
+ * Others: 输入相应的模式数字，进入不同修改模式，然后显示
+ * *********************/
+int updatastu_smenu(node_t *stulist, node_t *stup)
+{
+    int mode = 0; //模式选择
+    system("clear");
+    printf("**************************************\n");
+    printf("******  Update  Student  Menu ********\n");
+    printf("******  Choose 1 Update Name  ********\n");
+    printf("******  Choose 2 Update Age   ********\n");
+    printf("******  Choose 3 Update Math  ********\n");
+    printf("******  Choose 4 Update Lang  ********\n");
+    printf("******  Choose 5 Update Phil  ********\n");
+    printf("******  Choose 6 Update Clid  ********\n");
+    printf("**************************************\n");
+    setbuf(stdin, NULL);
+    scanf("%d", &mode);
+    updatestu_s(stulist, mode, stup);
+    return 0;
+}
+
+/* **********************
  * Summary: 显示学生菜单 
  * Parameters: 学生数据链表
  * Call: addstu() 
@@ -521,8 +547,15 @@ int showstu_menu(node_t *stulist)
     scanf("%d", &mode);
     //按模式排序
     sortstu(stulist, mode);
+    //重新设置名次
+    setstuorder(stulist);
     //学生数据链表打印
+    system("clear");
     LinkList_Show(stulist, show_stu);
+    printf("**************************************\n");
+    printf("********  Enter to continue  *********\n");
+    getchar();
+    getchar();
     return 0;
 }
 
@@ -546,37 +579,60 @@ int findstu_menu(node_t *stulist)
     printf("**************************************\n");
     setbuf(stdin, NULL);
     scanf("%d", &mode);
-    stu_t stu;      //存储临时值
+    stu_t *stu = (stu_t *)malloc(sizeof(stu_t));      //存储临时值
     node_t *p;      //存储得到的链表节点
     //按模式返回对于的信息
     switch(mode)
     {
         case 0:
+            system("clear");
+            printf("***********   SHOW ALL   *************\n");
             p = findstu(stulist, mode, stu);
             LinkList_Show(p, show_stu);
+            printf("**************************************\n");
+            putchar('\n');
+            putchar('\n');
+            printf("**********  Enter to continue  *******\n");
+            getchar();
+            getchar();
             break;
         case 1:
             {
                 printf("*****  Input Cid  *****\n");
-                scanf("%d", &stu.cid);
+                scanf("%d", &stu->cid);
                 p = findstu(stulist, mode, stu);
                 show_stu(p->data);
+                putchar('\n');
+                putchar('\n');
+                printf("**********  Enter to continue  *******\n");
+                getchar();
+                getchar();
                 break;
             }
         case 2:
             {
                 printf("*****  Input Name  *****\n");
-                scanf("%s", stu.name);
+                scanf("%s", stu->name);
                 p = findstu(stulist, mode, stu);
                 LinkList_Show(p, show_stu);
+                putchar('\n');
+                putchar('\n');
+                printf("**********  Enter to continue  *******\n");
+                getchar();
+                getchar();
                 break;
             }
         case 3:
             {
                 printf("*****  Input Class  ****\n");
-                scanf("%d", &stu.classid);
+                scanf("%d", &stu->classid);
                 p = findstu(stulist, mode, stu);
                 LinkList_Show(p, show_stu);
+                putchar('\n');
+                putchar('\n');
+                printf("**********  Enter to continue  *******\n");
+                getchar();
+                getchar();
                 break;
             }
         default:
