@@ -31,7 +31,7 @@ node_t *loadstu();
 //保存学生信息
 int savestu(node_t *head);
 //添加学生信息
-int addstu(node_t *head, stu_t stu);
+int addstu(node_t *head, stu_t *stup);
 //查找学生函数
 node_t *findstu(node_t *head, int mode, stu_t stu);
 //删除学生函数

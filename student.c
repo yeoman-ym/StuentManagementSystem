@@ -30,26 +30,29 @@ node_t *loadstu()
     LinkList head = LinkCreate();
     SYSERR(head,==,NULL,"STU load data error\n",NULL);
 
-    FILE *fp = fopen(STUFILE, "a+");
+    FILE *fp = fopen(STUFILE, "r");
     SYSERR(fp,==,NULL,"Student file open err\n",NULL);
 
     int people_num;                     //存放读取出来的人数
     int max_num;                        //存放文件的最大编号
+
     if(fscanf(fp, "%d\t%d\n", &people_num, &max_num) == EOF)
     {
-        //如果文件数据为空，关闭文件，返回头结点
+        //如果没有读到文件数据，说明为空，关闭文件，返回头结点
         fclose(fp);
         return head;
     }
 
     //循环从文件读取每个学生数据插入到链表
     stu_t *tmp = (stu_t *)malloc(sizeof(stu_t));
-    for(int i = 1; i < people_num; i++)
+    bzero(tmp, sizeof(stu_t));
+    for(int i = 1; i <= people_num; i++)
     {
         fscanf(fp, "%d %s %s %d %d %d %d %d %d %d\n", &tmp->cid, tmp->name, tmp->pass, \
                &tmp->age, &tmp->gmath, &tmp->glang, &tmp->gphil, &tmp->gsum, &tmp->order,\
                &tmp->classid);
-        LinkList_hInsert(head, tmp, sizeof(node_t));
+        LinkList_hInsert(head, tmp, sizeof(stu_t));
+        bzero(tmp, sizeof(stu_t));
     }
     fclose(fp);
     return head;
@@ -58,9 +61,10 @@ node_t *loadstu()
 int savestu(node_t *head)
 {
     SYSERR(head,==,NULL,"head is null\n",-1);
-    SYSERR(head->data,==,NULL,"data is null\n",-1);
+    SYSERR(head->next->data,==,NULL,"data is null\n",-1);
+    SYSERR(head->next,==,head,"data is empty\n",-1);
 
-    FILE *fp = fopen(STUFILE, "a+");
+    FILE *fp = fopen(STUFILE, "w+");
     SYSERR(fp,==,NULL,"student file open err\n",-1);
     //计算链表节点个数，找到学生的最大编号，两个数据写入文件
     int length = LinkList_Length(head);
@@ -92,45 +96,45 @@ int savestu(node_t *head)
  * Return:
  * Others: 提示学生输入姓名，密码，年龄，班级，数学成绩等
  * *********************/
-int addstu(node_t *head, stu_t stu)
+int addstu(node_t *head, stu_t *stup)
 {
     //需要学生输入的数据有七个，其他自动生成
-    system("clear");
     printf("********************************\n");
     printf("******* Input Your name ********\n");
-    scanf("%s", stu.name);
-    system("clear");
+    scanf("%s", stup->name);
+    putchar('\n');
     printf("********************************\n");
     printf("******* Input Your passwd ******\n");
-    scanf("%s", stu.pass);
-    system("clear");
+    scanf("%s", stup->pass);
+    putchar('\n');
     printf("********************************\n");
     printf("******* Input Your age *********\n");
-    scanf("%d", &stu.age);
-    system("clear");
+    scanf("%d", &stup->age);
+    putchar('\n');
     printf("********************************\n");
     printf("******* Input Your class *******\n");
-    scanf("%d", &stu.classid);
-    system("clear");
+    scanf("%d", &stup->classid);
+    putchar('\n');
     printf("********************************\n");
     printf("******* Input Your math ********\n");
-    scanf("%d", &stu.gmath);
-    system("clear");
+    scanf("%d", &stup->gmath);
+    putchar('\n');
     printf("********************************\n");
     printf("******* Input Your C lan *******\n");
-    scanf("%d", &stu.glang);
-    system("clear");
+    scanf("%d", &stup->glang);
+    putchar('\n');
     printf("********************************\n");
     printf("******* Input Your phil ********\n");
-    scanf("%d", &stu.gphil);
+    scanf("%d", &stup->gphil);
+    putchar('\n');
     //获取新学号
-    stu.cid = getnewcid();
+    stup->cid = getnewcid();
     //总分计算
-    stu.gsum = stu.gmath + stu.glang + stu.gphil;
+    stup->gsum = stup->gmath + stup->glang + stup->gphil;
     //序号，插入之后才知道,先初始化为0
-    stu.order = 0; 
+    stup->order = 0; 
     //学生数据插入链表
-    LinkList_hInsert(head, &stu, sizeof(stu_t));
+    LinkList_hInsert(head, stup, sizeof(stu_t));
     setstuorder(head);
     return 0;
 }
@@ -273,16 +277,17 @@ int setstuorder(node_t *head)
 void show_stu(const void *data)
 {
     const stu_t *stu = (stu_t*)data;
-    printf("*****  cid  is %d  *****\n", stu->cid);
-    printf("*****  name is %s  *****\n", stu->name);
-    printf("*****  pass is %s  *****\n", stu->pass);
-    printf("*****  age  is %d  *****\n", stu->age);
-    printf("*****  math is %d  *****\n", stu->gmath);
-    printf("*****  lang is %d  *****\n", stu->glang);
-    printf("*****  phil is %d  *****\n", stu->gphil);
-    printf("*****  sum  is %d  *****\n", stu->gsum);
-    printf("*****  orde is %d  *****\n", stu->order);
-    printf("*****  clas is %d  *****\n", stu->classid);
+    printf("*****  cid  is %6d  *****\n", stu->cid);
+    printf("*****  name is %6s  *****\n", stu->name);
+    printf("*****  pass is %6s  *****\n", stu->pass);
+    printf("*****  age  is %6d  *****\n", stu->age);
+    printf("*****  math is %6d  *****\n", stu->gmath);
+    printf("*****  lang is %6d  *****\n", stu->glang);
+    printf("*****  phil is %6d  *****\n", stu->gphil);
+    printf("*****  sum  is %6d  *****\n", stu->gsum);
+    printf("*****  orde is %6d  *****\n", stu->order);
+    printf("*****  clas is %6d  *****\n", stu->classid);
+    putchar('\n');
 }
 //比较学生学号
 int cmp_stu_cid(const void *data1, const void *data2)
@@ -296,7 +301,7 @@ int cmp_stu_name(const void *data1, const void *data2)
 {
     stu_t *stu1 = (stu_t*)data1;
     stu_t *stu2 = (stu_t*)data2;
-    return stu1->name - stu2->name;
+    return strcmp(stu1->name,stu2->name);
 }
 //比较学生数学成绩
 int cmp_stu_gmath(const void *data1, const void *data2)

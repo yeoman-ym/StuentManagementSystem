@@ -253,7 +253,10 @@ int LinkList_Length(node_t *head)
     int count = 0;
     node_t *p = head->next;
     while(p != head)
+    {
+        p = p->next;
         count++;
+    }
     return count;
 }
 

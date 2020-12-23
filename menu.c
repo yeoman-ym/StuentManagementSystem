@@ -80,7 +80,8 @@ int admin_menu(node_t *stulist)
         scanf("%s", ch);
         if(ch[0] == '0')
             break;
-        switch(ch[0]){
+        switch(ch[0])
+        {
             case '1':
                 addstu_menu(stulist);
                 break;
@@ -123,7 +124,8 @@ int welcome_admin_menu(node_t *stulist)
     int count = LOOPCOUNT;
     char admin_name[16] = "";
     char admin_pass[16] = "";
-    while(count)
+    int flag = 1;  //成功进入后，下次直接退出循环
+    while(count && flag)
     {
         count--;
         system("clear");
@@ -144,6 +146,7 @@ int welcome_admin_menu(node_t *stulist)
             if(strcmp(admin_pass, ADMINPASS) == 0)
             {
                 admin_menu(stulist);
+                flag = 0;
             }
             else
             {
@@ -259,7 +262,7 @@ int welcome_tch_menu(node_t *stulist, node_t *tchlist)
  * Return: 
  * Others:
  * *********************/
-int stu_menu(node_t *stulist, stu_t *stup)
+int stu_menu(node_t *stulist, node_t *stup)
 {
     char ch[4] = "";
     while(true)
@@ -278,7 +281,14 @@ int stu_menu(node_t *stulist, stu_t *stup)
         switch(ch[0])
         {
             case '1':
-                show_stu(stup);
+                putchar('\n');
+                putchar('\n');
+                show_stu(stup->data);
+                putchar('\n');
+                putchar('\n');
+                printf("*********  Enter to continue  *********\n");
+                getchar();
+                getchar();
                 break;
             case '2':
                 updatestu_menu(stulist);
@@ -308,9 +318,12 @@ int stu_menu(node_t *stulist, stu_t *stup)
 int welcome_stu_menu(node_t *stulist)
 {
     int COUNT = LOOPCOUNT;
-    char stu_name[32] = "";
-    char stu_pass[16] = "";
-    while(COUNT)
+    stu_t *stu_tmp = (stu_t *)malloc(sizeof(stu_t));
+    SYSERR(stu_tmp,==,NULL,"malloc err\n",-1);
+    //初始化名字和密码
+    bzero(stu_tmp, sizeof(stu_t));
+    int flag = 1; // 进入学生操作菜单置0
+    while(COUNT && flag)
     {
         COUNT--;
         system("clear");
@@ -319,21 +332,23 @@ int welcome_stu_menu(node_t *stulist)
         printf("**************************************\n");
         putchar('\n');
         putchar('\n');
+        putchar('\n');
         printf("****    Input Your Username       ****\n");
         setbuf(stdin,NULL);
-        scanf("%s", stu_name);
+        scanf("%s", stu_tmp->name);
         printf("****    Input Your Password       ****\n");
         setbuf(stdin,NULL);
-        scanf("%s", stu_pass);
+        scanf("%s", stu_tmp->pass);
         //根据用户名的唯一性，查找学生链表中的学生名字，用输入密码与之匹配
-        node_t *p = LinkList_Find(stulist, stu_name, cmp_stu_name);
+        node_t *p = LinkList_Find(stulist, stu_tmp, cmp_stu_name);
         //提取节点p的数据用的用户密码
         stu_t *stup = (stu_t *)p->data;
         if(p != NULL)
         {
-            if(strcmp(stu_pass, stup->pass) == 0)
+            if(strcmp(stu_tmp->pass, stup->pass) == 0)
             {
-                stu_menu(stulist,stup);
+                stu_menu(stulist,p);
+                flag = 0;
             }
             else
             {
@@ -381,10 +396,8 @@ int addstu_menu(node_t *stulist)
     putchar('\n');
     putchar('\n');
     putchar('\n');
-    getchar();
-    getchar();
     stu_t *newstu = (stu_t*)malloc(sizeof(stu_t));
-    addstu(stulist, *newstu);
+    addstu(stulist, newstu);
     return 0;
 }
 
@@ -401,10 +414,14 @@ int deletestu_menu(node_t *stulist)
     printf("**************************************\n");
     printf("******  Delete Student Menu   ********\n");
     printf("**************************************\n");
+    putchar('\n');
+    putchar('\n');
+    putchar('\n');
     //找到需要删除的学生，赋值给stu
     stu_t stu;
     printf("******  Input Student ID  *********\n");
     scanf("%d", &stu.cid);
+    putchar('\n');
     node_t *p = LinkList_Find(stulist, &stu.cid, cmp_stu_cid);
     stu_t *stup = (stu_t*)p->data;
     //调用函数删除该学生节点

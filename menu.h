@@ -27,7 +27,7 @@ int welcome_tch_menu(node_t *stulist, node_t *tchlist);
 #endif
 
 //学生操作菜单
-int stu_menu(node_t *stulist, stu_t *stup);
+int stu_menu(node_t *stulist, node_t *stup);
 //学生登录界面
 int welcome_stu_menu(node_t *stulist);
 
