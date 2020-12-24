@@ -252,15 +252,17 @@ int delstu(node_t *head, stu_t stu)
  * *****************************************************************/
 int updatestu(node_t *head, int mode, stu_t olddata, stu_t newdata)
 {
-    node_t *p = LinkList_Find(head, &olddata.cid, cmp_stu_cid);                   //临时存放找到的节点
-
+    node_t *oldnode = LinkList_Find(head, &olddata.cid, cmp_stu_cid);                   //临时存放找到的节点
+    SYSERR(oldnode,==,NULL,"malloc err\n",-1);
+    node_t *p = (node_t*)malloc(sizeof(node_t));
+    memcpy(p, oldnode, sizeof(node_t));
     switch(mode)
     {
         case 1:
             //修改节点赋值给新节点
             strcpy(((stu_t *)p->data)->name,newdata.name);
             //修改链表中的数据
-            LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_name);
+            LinkList_update(head, oldnode->data, p->data, sizeof(stu_t), cmp_stu_cid);
             break;
         case 2:
             //通过ID 找到该学生节点
@@ -269,31 +271,28 @@ int updatestu(node_t *head, int mode, stu_t olddata, stu_t newdata)
             //更新总分
             ((stu_t*)p->data)->gsum = ((stu_t*)p->data)->gmath + ((stu_t*)p->data)->glang + ((stu_t*)p->data)->gphil;
             //更新链表
-            LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_gmath);
+            LinkList_update(head, oldnode->data, p->data, sizeof(stu_t), cmp_stu_cid);
             break;
         case 3:
             ((stu_t*)p->data)->glang = newdata.glang;
             //更新总分
             ((stu_t*)p->data)->gsum = ((stu_t*)p->data)->gmath + ((stu_t*)p->data)->glang + ((stu_t*)p->data)->gphil;
-            LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_glang);
+            LinkList_update(head, oldnode->data, p->data, sizeof(stu_t), cmp_stu_cid);
             break;
         case 4:
             ((stu_t*)p->data)->gphil = newdata.gphil;
             //更新总分
             ((stu_t*)p->data)->gsum = ((stu_t*)p->data)->gmath + ((stu_t*)p->data)->glang + ((stu_t*)p->data)->gphil;
-            LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_gphil);
+            LinkList_update(head, oldnode->data, p->data, sizeof(stu_t), cmp_stu_cid);
             break;
         case 5:
             ((stu_t*)p->data)->classid = newdata.classid;            
-            LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_classid);
+            LinkList_update(head, oldnode->data, p->data, sizeof(stu_t), cmp_stu_cid);
             break;
         default:
             printf("\t\t\t\t\t*****  The mode is not exist  *****\n");
             break;
     }
-    show_stu(p->data);
-    getchar();
-    getchar();
     return 0;
 }
 
@@ -353,9 +352,10 @@ int sortstu(node_t *head, int mode)
  * ******************************************/
 int updatestu_s(node_t *head, int mode, node_t *stup)
 {
+    //申请一个新节点，保存输入的新数据
     node_t* newnode = (node_t*)malloc(sizeof(node_t));
     SYSERR(newnode,==,NULL,"malloc err\n",-1);
-
+    //学生节点信息赋值给新节点
     memcpy(newnode, stup, sizeof(node_t));
     stu_t *stu = (stu_t*)newnode->data;
 
@@ -390,6 +390,7 @@ int updatestu_s(node_t *head, int mode, node_t *stup)
     stu->gsum = stu->gmath + stu->glang + stu->gphil;
     //通过cid找到要修改的学生的节点
     LinkList_update(head, stup->data, newnode->data, sizeof(stu_t), cmp_stu_cid);
+    DATASHOWF;
     show_stu(newnode->data);
     getchar();
     getchar();

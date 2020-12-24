@@ -345,6 +345,8 @@ int welcome_stu_menu(node_t *stulist)
         printf("\t\t\t\t\t**************************************\n");
         putchar('\n');
         putchar('\n');
+        DATASHOWF;
+        LinkList_Show(stulist, show_stu);
         putchar('\n');
         printf("\t\t\t\t\t****    Input Your Username       ****\n");
         setbuf(stdin,NULL);
@@ -433,6 +435,7 @@ int deletestu_menu(node_t *stulist)
     system("clear");
     printf("\t\t\t\t\t**************************************\n");
     printf("\t\t\t\t\t******  Delete Student Menu   ********\n");
+    printf("\t\t\t\t\t**************************************\n");
     printf("\t\t\t\t\t******  Choose 1 by Cid       ********\n");
     printf("\t\t\t\t\t******  Choose 2 by Name      ********\n");
     printf("\t\t\t\t\t******  Choose 3 by Classid   ********\n");
@@ -441,6 +444,7 @@ int deletestu_menu(node_t *stulist)
     putchar('\n');
     DATASHOWF;
     LinkList_Show(stulist, show_stu);
+    printf("\t\t\t\t\t******  Choose Mode to Delete ********\n");
     char ch[4] = "";
     setbuf(stdin, NULL);
     printf("\t\t\t\t\t");
@@ -545,6 +549,8 @@ int updatestu_menu(node_t *stulist)
             updatestu(stulist, num, tmp_olddata, tmp_newdata);        
             DATASHOWF;
             LinkList_Show(stulist, show_stu);
+            getchar();
+            getchar();
             break;
         case 2:
             DATASHOWF;
@@ -626,6 +632,8 @@ int updatastu_smenu(node_t *stulist, node_t *stup)
     printf("\t\t\t\t\t******  Choose 5 Update Phil  ********\n");
     printf("\t\t\t\t\t******  Choose 6 Update Clid  ********\n");
     printf("\t\t\t\t\t**************************************\n");
+    putchar('\n');
+    putchar('\n');
     setbuf(stdin, NULL);
     printf("\t\t\t\t\t");
     scanf("%d", &mode);
