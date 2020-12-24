@@ -717,6 +717,7 @@ int findstu_menu(node_t *stulist)
             system("clear");
             printf("\t\t\t\t\t***********   SHOW ALL   *************\n");
             p = findstu(stulist, mode, stu);
+            DATASHOWF;
             LinkList_Show(p, show_stu);
             printf("\t\t\t\t\t**************************************\n");
             putchar('\n');
@@ -733,6 +734,7 @@ int findstu_menu(node_t *stulist)
                 printf("\t\t\t\t\t");
                 scanf("%d", &stu->cid);
                 p = findstu(stulist, mode, stu);
+                DATASHOWF;
                 show_stu(p->data);
                 putchar('\n');
                 putchar('\n');
@@ -749,6 +751,7 @@ int findstu_menu(node_t *stulist)
                 printf("\t\t\t\t\t");
                 scanf("%s", stu->name);
                 p = findstu(stulist, mode, stu);
+                DATASHOWF;
                 LinkList_Show(p, show_stu);
                 putchar('\n');
                 putchar('\n');
@@ -765,6 +768,7 @@ int findstu_menu(node_t *stulist)
                 printf("\t\t\t\t\t");
                 scanf("%d", &stu->classid);
                 p = findstu(stulist, mode, stu);
+                DATASHOWF;
                 LinkList_Show(p, show_stu);
                 putchar('\n');
                 putchar('\n');
