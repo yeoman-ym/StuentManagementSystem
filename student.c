@@ -18,13 +18,14 @@
 int getnewcid(node_t *head)
 {
     int tmp_cid = 0;
+    int tmp_num = 0;
     //读取目前文件中的最大的学号
     FILE *fp = fopen(STUFILE, "a+");
     SYSERR(fp,==,NULL,"file open err\n",-1);
     //跳过一个数，取出上次文件中最大的编号
-    fseek(fp, sizeof(int), SEEK_SET);
+    //fseek(fp, sizeof(int), SEEK_SET);
 
-    if(fscanf(fp, "%d", &tmp_cid) == EOF)
+    if(fscanf(fp, "%d\t%d\n", &tmp_num, &tmp_cid) == EOF)
     {
         fclose(fp);
         return 1;
@@ -126,32 +127,50 @@ int addstu(node_t *head, stu_t *stup)
     //需要学生输入的数据有七个，其他自动生成
     printf("\t\t\t\t\t********************************\n");
     printf("\t\t\t\t\t******* Input Your name ********\n");
-    scanf("%s", stup->name);
-    putchar('\n');
+    do{
+        printf("\t\t\t\t\t");
+        setbuf(stdin,NULL);
+        scanf("%s", stup->name);
+    }while(!Name_check(stup->name)); //名字正确返回1
     printf("\t\t\t\t\t********************************\n");
     printf("\t\t\t\t\t******* Input Your passwd ******\n");
+    printf("\t\t\t\t\t");
     scanf("%s", stup->pass);
-    putchar('\n');
     printf("\t\t\t\t\t********************************\n");
     printf("\t\t\t\t\t******* Input Your age *********\n");
-    scanf("%d", &stup->age);
-    putchar('\n');
+    do{
+        setbuf(stdin, NULL);
+        printf("\t\t\t\t\t");
+        scanf("%d", &stup->age);
+    }while(!Age_check(stup->age));
     printf("\t\t\t\t\t********************************\n");
     printf("\t\t\t\t\t******* Input Your class *******\n");
-    scanf("%d", &stup->classid);
-    putchar('\n');
+    do{
+        setbuf(stdin, NULL);
+        printf("\t\t\t\t\t");
+        scanf("%d", &stup->classid);
+    }while(!Classid_check(stup->classid));
     printf("\t\t\t\t\t********************************\n");
     printf("\t\t\t\t\t******* Input Your math ********\n");
-    scanf("%d", &stup->gmath);
-    putchar('\n');
+    do{
+        setbuf(stdin, NULL);
+        printf("\t\t\t\t\t");
+        scanf("%d", &stup->gmath);
+    }while(!Score_check(stup->gmath));
     printf("\t\t\t\t\t********************************\n");
     printf("\t\t\t\t\t******* Input Your C lan *******\n");
-    scanf("%d", &stup->glang);
-    putchar('\n');
+    do{
+        setbuf(stdin, NULL);
+        printf("\t\t\t\t\t");
+        scanf("%d", &stup->glang);
+    }while(!Score_check(stup->glang));
     printf("\t\t\t\t\t********************************\n");
     printf("\t\t\t\t\t******* Input Your phil ********\n");
-    scanf("%d", &stup->gphil);
-    putchar('\n');
+    do{
+        setbuf(stdin, NULL);
+        printf("\t\t\t\t\t");
+        scanf("%d", &stup->gphil);
+    }while(!Score_check(stup->gphil));
     //获取新学号
     stup->cid = getnewcid(head);
     //总分计算
@@ -161,6 +180,10 @@ int addstu(node_t *head, stu_t *stup)
     //学生数据插入链表
     LinkList_hInsert(head, stup, sizeof(stu_t));
     setstuorder(head);
+    DATASHOWF;
+    LinkList_Show(head, show_stu);
+    getchar();
+    getchar();
     return 0;
 }
 
@@ -224,19 +247,16 @@ int delstu(node_t *head, stu_t stu)
  * Parameters: 学生数据链表head，模式mode，旧结构体数据，新结构体数据
  * Calls: LinkList_Find LinkList_update    
  * Return: 成功返回0
- * Others: 名字先找后改，其他的先找学号，再改数据
+ * Others: 先找学号，再改数据
  * 1,修改名字2，修改数学成绩3，修改C成绩4，修改物理成绩，5，修改班号
  * *****************************************************************/
 int updatestu(node_t *head, int mode, stu_t olddata, stu_t newdata)
 {
-    node_t *p;                                  //临时存放找到的节点
+    node_t *p = LinkList_Find(head, &olddata.cid, cmp_stu_cid);                   //临时存放找到的节点
 
     switch(mode)
     {
         case 1:
-            //通过olddata.name 找到节点
-            p = LinkList_Find(head, olddata.name, cmp_stu_name);
-            SYSERR(p,==,NULL,"Not found \n",-1);
             //修改节点赋值给新节点
             strcpy(((stu_t *)p->data)->name,newdata.name);
             //修改链表中的数据
@@ -244,7 +264,6 @@ int updatestu(node_t *head, int mode, stu_t olddata, stu_t newdata)
             break;
         case 2:
             //通过ID 找到该学生节点
-            p = LinkList_Find(head, &olddata.cid, cmp_stu_cid);
             //修改该节点的数学成绩
             ((stu_t*)p->data)->gmath = newdata.gmath;
             //更新总分
@@ -253,28 +272,28 @@ int updatestu(node_t *head, int mode, stu_t olddata, stu_t newdata)
             LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_gmath);
             break;
         case 3:
-            p = LinkList_Find(head, &olddata.cid, cmp_stu_cid);
             ((stu_t*)p->data)->glang = newdata.glang;
             //更新总分
             ((stu_t*)p->data)->gsum = ((stu_t*)p->data)->gmath + ((stu_t*)p->data)->glang + ((stu_t*)p->data)->gphil;
             LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_glang);
             break;
         case 4:
-            p = LinkList_Find(head, &olddata.cid, cmp_stu_cid);
             ((stu_t*)p->data)->gphil = newdata.gphil;
             //更新总分
             ((stu_t*)p->data)->gsum = ((stu_t*)p->data)->gmath + ((stu_t*)p->data)->glang + ((stu_t*)p->data)->gphil;
             LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_gphil);
             break;
         case 5:
-            p = LinkList_Find(head, &olddata.cid, cmp_stu_cid);
             ((stu_t*)p->data)->classid = newdata.classid;            
             LinkList_update(head, &olddata, p->data, sizeof(stu_t), cmp_stu_classid);
             break;
         default:
-            printf("*****  The mode is not exist  *****\n");
+            printf("\t\t\t\t\t*****  The mode is not exist  *****\n");
             break;
     }
+    show_stu(p->data);
+    getchar();
+    getchar();
     return 0;
 }
 
@@ -289,6 +308,14 @@ int sortstu(node_t *head, int mode)
 {
     switch(mode)
     {
+        case 0:  //统计学生数据，展示平均分，最高分，最低分
+           system("clear");
+           stu_average(head);
+           system("clear");
+           stu_max_score(head);
+           system("clear");
+           stu_min_score(head);
+           break;
         case 1:
             LinkList_Bubble_sort(head, cmp_stu_cid);
             break;
@@ -363,7 +390,9 @@ int updatestu_s(node_t *head, int mode, node_t *stup)
     stu->gsum = stu->gmath + stu->glang + stu->gphil;
     //通过cid找到要修改的学生的节点
     LinkList_update(head, stup->data, newnode->data, sizeof(stu_t), cmp_stu_cid);
-    
+    show_stu(newnode->data);
+    getchar();
+    getchar();
     return 0;
 }
 
@@ -398,17 +427,8 @@ int setstuorder(node_t *head)
 void show_stu(const void *data)
 {
     stu_t *stu = (stu_t*)data;
-    printf("\t\t\t\t\t*****  cid  is %6d  *****\n", stu->cid);
-    printf("\t\t\t\t\t*****  name is %6s  *****\n", stu->name);
-    printf("\t\t\t\t\t*****  pass is %6s  *****\n", stu->pass);
-    printf("\t\t\t\t\t*****  age  is %6d  *****\n", stu->age);
-    printf("\t\t\t\t\t*****  math is %6d  *****\n", stu->gmath);
-    printf("\t\t\t\t\t*****  lang is %6d  *****\n", stu->glang);
-    printf("\t\t\t\t\t*****  phil is %6d  *****\n", stu->gphil);
-    printf("\t\t\t\t\t*****  sum  is %6d  *****\n", stu->gsum);
-    printf("\t\t\t\t\t*****  orde is %6d  *****\n", stu->order);
-    printf("\t\t\t\t\t*****  clas is %6d  *****\n", stu->classid);
-    putchar('\n');
+    printf("\t\t\t\t\t%2d%8s%8s%4d%4d%5d%5d%5d%4d%6d\n", stu->cid, stu->name, stu->pass, stu->age, stu->gmath, \
+                                                        stu->glang, stu->gphil, stu->gsum, stu->order, stu->classid);
 }
 
 /* ******************************************
@@ -491,4 +511,208 @@ int cmp_stu_classid(const void *data1, const void *data2)
 void destroy_Linklist(node_t **stulist)
 {
     LinkList_Destory(stulist);
+}
+
+/* ******************************************
+ * Summary : 学生名字校验
+ * Parameters: 学生名字指针name
+ * Calls: isalpha  
+ * Return: 名字正确返回1，错误返回0
+ * Others: 
+ * ******************************************/
+int Name_check(const char *name)
+{
+    SYSERR(name,==,NULL,"name is null\n",-1);
+    const char *p = name;
+    while(*p)
+    {
+        if(!isalpha(*p))
+        {
+            printf("\t\t\t\t\t*******  Input again  ********\n");
+            return false;
+        }
+        p++;
+    }
+    return true;
+}
+
+/* ******************************************
+ * Summary : 学生年龄校验
+ * Parameters: 学生年龄
+ * Calls: 无
+ * Return: 年龄正确返回1，错误返回0
+ * Others: 年龄定在1-100之间
+ * ******************************************/
+int Age_check(int age)
+{
+    if(age > 0 && age <= 100)
+        return true;
+    else
+        {
+            printf("\t\t\t\t\t*******  Input again  ********\n");
+            return false;
+        }
+}
+
+/* ******************************************
+ * Summary : 学生分数校验
+ * Parameters: 学生分数
+ * Calls: 无
+ * Return: 分数正确返回1，错误返回0
+ * Others: 分数定在0-100之间
+ * ******************************************/
+int Score_check(int score)
+{
+    if(score >= 0 && score <= 100)
+        return true;
+    else
+        {
+            printf("\t\t\t\t\t*******  Input again  ********\n");
+            return false;
+        }
+}
+
+/* ******************************************
+ * Summary : 学生班号校验
+ * Parameters: 学生班号
+ * Calls: 无
+ * Return: 班号正确返回1，错误返回0
+ * Others: 班号定在1-10之间
+ * ******************************************/
+int Classid_check(int classid)
+{
+    if(classid >= 1 && classid <= 10)
+        return true;
+    else
+        {
+            printf("\t\t\t\t\t*******  Input again  ********\n");
+            return false;
+        }
+}
+
+//平均分——各个科目的平均分同时展示
+int stu_average(node_t *head)
+{
+    SYSERR(head,==,NULL,"stulist is null\n",-1);
+    //获取链表人数
+    int length = LinkList_Length(head);
+    //获取单科总分数
+    int sum_math = 0;
+    int sum_glang = 0;
+    int sum_gphil = 0;
+    int sum_all = 0;
+    node_t *p = head->next;
+    while(p != head)
+    {
+        sum_math += ((stu_t*)p->data)->gmath;
+        sum_glang += ((stu_t*)p->data)->glang;
+        sum_gphil += ((stu_t*)p->data)->gphil;
+        sum_all += ((stu_t*)p->data)->gsum;
+        p = p->next;
+    }
+
+    system("clear");
+    putchar('\n');
+    putchar('\n');
+    putchar('\n');
+    printf("\t\t\t\t\t***********  Math average  ***********\n");
+    printf("\t\t\t\t\t                  %d                  \n", sum_math/length);
+    printf("\t\t\t\t\t***********  Clan average  ***********\n");
+    printf("\t\t\t\t\t                  %d                  \n", sum_glang/length);
+    printf("\t\t\t\t\t***********  Phil average  ***********\n");
+    printf("\t\t\t\t\t                  %d                  \n", sum_gphil/length);
+    printf("\t\t\t\t\t***********  Sum  average  ***********\n");
+    printf("\t\t\t\t\t                  %d                  \n", sum_all/length);
+    putchar('\n');
+    putchar('\n');
+    putchar('\n');
+    printf("\t\t\t\t\t***********  Enter to continue  ************\n");
+    getchar();
+    getchar();
+    return 0;
+}
+
+//最高分
+int stu_max_score(node_t *stulist)
+{
+    SYSERR(stulist,==,NULL,"stulist is null\n",-1);
+    int max_math = 0;
+    int max_Clang = 0;
+    int max_phily = 0;
+    int max_sum = 0;
+
+    node_t *p = stulist->next;
+    while(p != stulist)
+    {
+        if(max_math <= ((stu_t *)p->data)->gmath)
+            max_math = ((stu_t *)p->data)->gmath;
+        if(max_Clang <= ((stu_t *)p->data)->glang)
+            max_Clang = ((stu_t *)p->data)->glang;
+        if(max_phily <= ((stu_t *)p->data)->gphil)
+            max_phily = ((stu_t *)p->data)->gphil;
+        if(max_sum <= ((stu_t *)p->data)->gsum)
+            max_sum = ((stu_t *)p->data)->gsum;
+        p = p->next;
+    }
+    system("clear");
+    putchar('\n');
+    putchar('\n');
+    putchar('\n');
+    printf("\t\t\t\t\t***********  Math Maxscore  ***********\n");
+    printf("\t\t\t\t\t                  %d                  \n", max_math);
+    printf("\t\t\t\t\t***********  Clan Maxscore  ***********\n");
+    printf("\t\t\t\t\t                  %d                  \n", max_Clang);
+    printf("\t\t\t\t\t***********  Phil Maxscore  ***********\n");
+    printf("\t\t\t\t\t                  %d                  \n", max_phily);
+    printf("\t\t\t\t\t***********  Sum  Maxscore  ***********\n");
+    printf("\t\t\t\t\t                  %d                  \n", max_sum);
+    putchar('\n');
+    putchar('\n');
+    putchar('\n');
+    printf("\t\t\t\t\t***********  Enter to continue  ************\n");
+    getchar();
+    getchar();
+    return 0;
+}
+
+//最低分
+int stu_min_score(node_t *stulist)
+{
+    SYSERR(stulist,==,NULL,"stulist is null\n",-1);
+    node_t *p = stulist->next;
+    int min_math = ((stu_t *)p->data)->gmath;
+    int min_Clang = ((stu_t *)p->data)->glang;
+    int min_phily = ((stu_t *)p->data)->gphil;
+    int min_sum = ((stu_t *)p->data)->gsum;
+    while(p != stulist)
+    {
+        if(min_math >= ((stu_t *)p->data)->gmath)
+            min_math = ((stu_t *)p->data)->gmath;
+        if(min_Clang >= ((stu_t *)p->data)->glang)
+            min_Clang = ((stu_t *)p->data)->glang;
+        if(min_phily >= ((stu_t *)p->data)->gphil)
+            min_phily = ((stu_t *)p->data)->gphil;
+        if(min_sum >= ((stu_t *)p->data)->gsum)
+            min_sum = ((stu_t *)p->data)->gsum;
+        p = p->next;
+    }
+    system("clear");
+    putchar('\n');
+    putchar('\n');
+    putchar('\n');
+    printf("\t\t\t\t\t***********  Math Minscore  ***********\n");
+    printf("\t\t\t\t\t                  %d                  \n", min_math);
+    printf("\t\t\t\t\t***********  Clan Minscore  ***********\n");
+    printf("\t\t\t\t\t                  %d                  \n", min_Clang);
+    printf("\t\t\t\t\t***********  Phil Minscore  ***********\n");
+    printf("\t\t\t\t\t                  %d                  \n", min_phily);
+    printf("\t\t\t\t\t***********  Sum  Minscore  ***********\n");
+    printf("\t\t\t\t\t                  %d                  \n", min_sum);
+    putchar('\n');
+    putchar('\n');
+    putchar('\n');
+    printf("\t\t\t\t\t***********  Enter to continue  ************\n");
+    getchar();
+    getchar();
+    return 0;
 }

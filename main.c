@@ -23,9 +23,15 @@ int main()
     putchar('\n');
 
     char ch[4] = "";
+    printf("\t\t\t\t\t");
     scanf("%s", ch);
-    if(ch[0] == 'Y' || ch[0] == 'y') 
+    if(ch[0] == 'Y' || ch[0] == 'y')
+    {
         savestu(stulist);
+        system("clear");
+        DATASHOWF;
+        LinkList_Show(stulist, show_stu);
+    }
     //销毁链表
     destroy_Linklist(&stulist);
     

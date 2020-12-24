@@ -20,5 +20,7 @@
 
 /* #define TEAFILE "teacher.dat"    教师数据文件 */
 
+#define DATASHOWF printf("\t\t\t\t\tid    name    pass age math Clan phil sum order clid\n");
+
 #endif
 

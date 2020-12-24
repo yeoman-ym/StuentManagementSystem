@@ -10,6 +10,8 @@
 
 #include "dlist.h"
 
+#define DATASHOWF printf("\t\t\t\t\tid    name    pass age math Clan phil sum order clid\n");
+
 typedef struct student
 {
     int cid;        //学生学号
@@ -65,5 +67,23 @@ int cmp_stu_order(const void *data1, const void *data2);
 int cmp_stu_classid(const void *data1, const void *data2);
 //销毁学生链表
 void destroy_Linklist(node_t **stulist);
+
+//校验
+//名字校验
+int Name_check(const char *);
+//年龄校验
+int Age_check(int);
+//成绩校验
+int Score_check(int);
+//班号校验
+int Classid_check(int);
+
+//统计
+//平均分——各个科目的平均分+总分平均分同时展示
+int stu_average(node_t *stulist);
+//最高分
+int stu_max_score(node_t *stulist);
+//最低分
+int stu_min_score(node_t *stulsit);
 
 #endif

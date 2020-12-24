@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #define SYSERR(X,OPTION,Y,MESSAGE,Z) if((X) OPTION (Y) )\
                                         {\
