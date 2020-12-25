@@ -7,13 +7,6 @@
 
 #include "dlist.h"
 
-/* ******************************************
- * Summary: 双向循环链表建立
- * Parameters: 无
- * Calls:   
- * Return: 成功返回头指针，失败返回NULL
- * Others: 
- * ******************************************/
 LinkList LinkCreate()
 {
     LinkList head = (LinkList)malloc(sizeof(node_t));
@@ -26,13 +19,6 @@ LinkList LinkCreate()
     return head;
 }
 
-/* ******************************************
- * Summary: 双向链表的头插
- * Parameters: 学生数据链表，万能数据，数据大小
- * Calls: 
- * Return: 成功返回0，失败返回-1
- * Others: 
- * ******************************************/
 int LinkList_hInsert(LinkList head, const void *data, int size)
 {
     //安全检查
@@ -60,13 +46,6 @@ int LinkList_hInsert(LinkList head, const void *data, int size)
     return 0;
 }
 
-/* ******************************************
- * Summary: 双向链表尾插
- * Parameters: 学生数据链表，万能数据，数据大小
- * Calls:   
- * Return: 成功返回0 失败返回-1
- * Others: 
- * ******************************************/
 int LinkList_tInsert(LinkList head, const void *data, int size)
 {
     //安全检查
@@ -95,13 +74,6 @@ int LinkList_tInsert(LinkList head, const void *data, int size)
     return 0;
 }
 
-/* ******************************************
- * Summary: 双向链表循环打印
- * Parameters: 学生数据链表，显示方式
- * Calls:  
- * Return: 成功返回0 失败返回0
- * Others: 
- * ******************************************/
 int LinkList_Show(node_t *head, showfun_t showfunc)
 {
     SYSERR(head,==,NULL,"head is null\n",-1);
@@ -116,13 +88,6 @@ int LinkList_Show(node_t *head, showfun_t showfunc)
     return 0;
 }
 
-/* ******************************************
- * Summary: 链表删除
- * Parameters: 学生数据链表
- * Calls: 
- * Return: 成功返回0 失败返回-1
- * Others: 
- * ******************************************/
 int LinkList_hdelete(LinkList head)
 {
     SYSERR(head->next,==,head,"list is empty\n",-1);
@@ -138,13 +103,6 @@ int LinkList_hdelete(LinkList head)
     return 0;
 }
 
-/* ******************************************
- * Summary: 双向链表的删除
- * Parameters: 学生数据链表
- * Calls:   
- * Return: 成功返回0 失败返回-1
- * Others: 
- * ******************************************/
 int LinkList_tdelete(LinkList head)
 {
     SYSERR(head->next,==,head,"list is empty\n",-1);
@@ -162,13 +120,6 @@ int LinkList_tdelete(LinkList head)
     return 0;
 }
 
-/* ******************************************
- * Summary: 链表的查找
- * Parameters: 学生数据链表，万能数据，查找模式
- * Calls: func_find 
- * Return: 成功返回0 失败返回NULL
- * Others: 
- * ******************************************/
 LinkList LinkList_Find(LinkList head, const void *data, func_find_t func_find)
 {
     SYSERR(head,==,NULL,"head is null\n",NULL);
@@ -185,13 +136,6 @@ LinkList LinkList_Find(LinkList head, const void *data, func_find_t func_find)
     return NULL;
 }
 
-/* ******************************************
- * Summary: 双向链表的修改
- * Parameters: 学生数据链表，旧数据，新数据，数据大小，查找方式
- * Calls: LinkList_Find  
- * Return: 成功返回0
- * Others: 
- * ******************************************/
 int LinkList_update(LinkList head, const void *olddata, const void *newdata, int size, func_find_t func_find)
 {
     SYSERR(head,==,NULL,"head is null\n",-1);
@@ -207,13 +151,6 @@ int LinkList_update(LinkList head, const void *olddata, const void *newdata, int
     return 0;
 }
 
-/* ******************************************
- * Summary: 双向循环链表删除
- * Parameters: 学生数据链表，万能数据，查找方式
- * Calls: LinkList_Find  
- * Return: 成功返回0 失败返回-1
- * Others: 
- * ******************************************/
 int LinkList_vdelete(LinkList head, const void *data, func_find_t func_find)
 {
     node_t *p = LinkList_Find(head, data, func_find);
@@ -227,13 +164,6 @@ int LinkList_vdelete(LinkList head, const void *data, func_find_t func_find)
     return 0;
 }
 
-/* ******************************************
- * Summary: 链表的销毁
- * Parameters: 学生数据链表
- * Calls: 
- * Return: 成功返回0
- * Others: 
- * ******************************************/
 int LinkList_Destory(node_t **head)
 {
     SYSERR(*head,==,NULL,"head is null\n",-1);
@@ -253,13 +183,6 @@ int LinkList_Destory(node_t **head)
     return 0;
 }
 
-/* ******************************************
- * Summary: 双向链表冒泡排序
- * Parameters: 学生数据链表，排序方式
- * Calls: funcmp    
- * Return: 成功返回0 失败返回-1
- * Others: 
- * ******************************************/
 int LinkList_Bubble_sort(LinkList head, func_find_t funcmp)
 {
     SYSERR(head,==,NULL,"head is null\n",-1);
@@ -286,13 +209,6 @@ int LinkList_Bubble_sort(LinkList head, func_find_t funcmp)
     return 0;
 }
 
-/* ******************************************
- * Summary: 双向循环链表选择排序
- * Parameters: 学生数据链表，模式
- * Calls: funcmp  
- * Return: 成功返回0 失败返回-1
- * Others: 
- * ******************************************/
 int LinkList_Select_sort(LinkList head, func_find_t funcmp)
 {
     SYSERR(head,==,NULL,"head is null\n",-1);
@@ -319,13 +235,6 @@ int LinkList_Select_sort(LinkList head, func_find_t funcmp)
     return 0;
 }
 
-/* ******************************************
- * Summary: 链表求长
- * Parameters: 学生数据链表
- * Calls: 无  
- * Return: 返回链表长度
- * Others: 
- * ******************************************/
 int LinkList_Length(node_t *head)
 {
     int count = 0;

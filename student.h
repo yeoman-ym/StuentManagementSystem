@@ -203,7 +203,7 @@ int Classid_check(int);
  * Parameters: 学生数据链表
  * Calls: 无
  * Return: 班号正确返回1，错误返回0
- * Others: 
+ * Others: 下班两个一致
  * ******************************************/
 int stu_average(node_t *stulist);
 int stu_max_score(node_t *stulist);
