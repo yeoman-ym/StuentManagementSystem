@@ -28,6 +28,8 @@ typedef struct student
 
 //获取新学生学号
 int getnewcid(node_t *head);
+//获取链表中的最大学号
+int getmaxcid(node_t *head);
 //加载学生信息
 node_t *loadstu();
 //保存学生信息

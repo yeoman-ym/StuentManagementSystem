@@ -461,11 +461,13 @@ int deletestu_menu(node_t *stulist)
             putchar('\n');
             //按照ID找到学生节点
             node_t *p = LinkList_Find(stulist, &stu.cid, cmp_stu_cid);
-            stu_t *stup = (stu_t*)p->data;
-            delstu(stulist, *stup);     //调用函数删除该学生节点
+            stu_t stup = *(stu_t*)p->data;
+            delstu(stulist, stup);     //调用函数删除该学生节点
             putchar('\n');
             DATASHOWF;
             LinkList_Show(stulist, show_stu);
+            getchar();
+            getchar();
             break;
         }
         case '2':
@@ -476,16 +478,14 @@ int deletestu_menu(node_t *stulist)
             printf("\t\t\t\t\t");
             scanf("%s", stu.name);
             putchar('\n');
-            //按照名字找到学生节点
-            node_t *p = stulist;
-            while((p = LinkList_Find(p, stu.name, cmp_stu_name)) != NULL)
-            {
-                stu_t *stup = (stu_t*)p->data;
-                delstu(stulist, *stup);     //调用函数删除该学生节点
-            }
+            //查找删
+            while(LinkList_Find(stulist, &stu, cmp_stu_name) != NULL)
+                LinkList_vdelete(stulist, &stu, cmp_stu_name);
             putchar('\n');
             DATASHOWF;
             LinkList_Show(stulist, show_stu);
+            getchar();
+            getchar();
             break;
         }
         case '3':
@@ -496,16 +496,14 @@ int deletestu_menu(node_t *stulist)
             printf("\t\t\t\t\t");
             scanf("%d", &stu.classid);
             putchar('\n');
-            //按照班号找到学生节点
-            node_t *p = stulist;
-            while((p = LinkList_Find(p, &stu.classid, cmp_stu_classid)) != NULL)
-            {
-                stu_t *stup = (stu_t*)p->data;
-                delstu(stulist, *stup);     //调用函数删除该学生节点
-            }
+            //按照班号找到学生节点, 循环删除
+            while(LinkList_Find(stulist, &stu, cmp_stu_classid) != NULL)
+                LinkList_vdelete(stulist, &stu, cmp_stu_classid);
             putchar('\n');
             DATASHOWF;
             LinkList_Show(stulist, show_stu);
+            getchar();
+            getchar();
             break;
         }
     }
@@ -533,15 +531,19 @@ int updatestu_menu(node_t *stulist)
     printf("\t\t\t\t\t******  Choose 4 Update Phil  ********\n");
     printf("\t\t\t\t\t******  Choose 5 Update Clid  ********\n");
     printf("\t\t\t\t\t**************************************\n");
+    putchar('\n');
+    putchar('\n');
+    DATASHOWF;
+    LinkList_Show(stulist, show_stu);
+    printf("\t\t\t\t\t******  Input Student ID  ********\n");
+    printf("\t\t\t\t\t");
+    scanf("%d", &tmp_olddata.cid);
+    printf("\t\t\t\t\t****** Choose mode   *************\n");
+    printf("\t\t\t\t\t");
     scanf("%d", &num);
     switch(num)
     {
         case 1:
-            DATASHOWF;
-            LinkList_Show(stulist, show_stu);
-            printf("\t\t\t\t\t******  Input Student ID  ********\n");
-            printf("\t\t\t\t\t");
-            scanf("%d", &tmp_olddata.cid);
             printf("\t\t\t\t\t******  Input New Name Data  ********\n");
             printf("\t\t\t\t\t");
             scanf("%s", tmp_newdata.name);            
@@ -553,11 +555,6 @@ int updatestu_menu(node_t *stulist)
             getchar();
             break;
         case 2:
-            DATASHOWF;
-            LinkList_Show(stulist, show_stu);
-            printf("\t\t\t\t\t******  Input Student ID     ********\n");
-            printf("\t\t\t\t\t");
-            scanf("%d", &tmp_olddata.cid);
             printf("\t\t\t\t\t******  Input New Math Data  ********\n");
             printf("\t\t\t\t\t");
             scanf("%d", &tmp_newdata.gmath);            
@@ -567,11 +564,6 @@ int updatestu_menu(node_t *stulist)
             LinkList_Show(stulist, show_stu);
             break;
         case 3:
-            DATASHOWF;
-            LinkList_Show(stulist, show_stu);
-            printf("\t\t\t\t\t******  Input Student ID     ********\n");
-            printf("\t\t\t\t\t");
-            scanf("%d", &tmp_olddata.cid);
             printf("\t\t\t\t\t******  Input New Clang Data ********\n");
             printf("\t\t\t\t\t");
             scanf("%d", &tmp_newdata.glang);            
@@ -581,11 +573,6 @@ int updatestu_menu(node_t *stulist)
             LinkList_Show(stulist, show_stu);
             break;
         case 4:
-            DATASHOWF;
-            LinkList_Show(stulist, show_stu);
-            printf("\t\t\t\t\t******  Input Student ID     ********\n");
-            printf("\t\t\t\t\t");
-            scanf("%d", &tmp_olddata.cid);
             printf("\t\t\t\t\t******  Input New Phily Data ********\n");
             printf("\t\t\t\t\t");
             scanf("%d", &tmp_newdata.gphil);            
@@ -595,11 +582,6 @@ int updatestu_menu(node_t *stulist)
             LinkList_Show(stulist, show_stu);
             break;
         case 5:
-            DATASHOWF;
-            LinkList_Show(stulist, show_stu);
-            printf("\t\t\t\t\t******  Input Student ID     ********\n");
-            printf("\t\t\t\t\t");
-            scanf("%d", &tmp_olddata.cid);
             printf("\t\t\t\t\t******  Input New Class Data ********\n");
             printf("\t\t\t\t\t");
             scanf("%d", &tmp_newdata.classid);            
@@ -609,6 +591,8 @@ int updatestu_menu(node_t *stulist)
             LinkList_Show(stulist, show_stu);
             break;
     }
+    getchar();
+    getchar();
     return 0;
 }
 
@@ -734,8 +718,15 @@ int findstu_menu(node_t *stulist)
                 printf("\t\t\t\t\t");
                 scanf("%d", &stu->cid);
                 p = findstu(stulist, mode, stu);
-                DATASHOWF;
-                show_stu(p->data);
+                if(NULL == p)
+                {
+                    printf("\t\t\t\t\t*********** Not found *************\n");
+                }
+                else
+                {
+                    DATASHOWF;
+                    show_stu(p->data);
+                }
                 putchar('\n');
                 putchar('\n');
                 printf("\t\t\t\t\t**********  Enter to continue  *******\n");
@@ -751,8 +742,15 @@ int findstu_menu(node_t *stulist)
                 printf("\t\t\t\t\t");
                 scanf("%s", stu->name);
                 p = findstu(stulist, mode, stu);
-                DATASHOWF;
-                LinkList_Show(p, show_stu);
+                if(NULL == p)
+                {
+                    printf("\t\t\t\t\t*********** Not found *************\n");
+                }
+                else
+                {
+                    DATASHOWF;
+                    LinkList_Show(p, show_stu);
+                }
                 putchar('\n');
                 putchar('\n');
                 printf("\t\t\t\t\t**********  Enter to continue  *******\n");
@@ -768,8 +766,15 @@ int findstu_menu(node_t *stulist)
                 printf("\t\t\t\t\t");
                 scanf("%d", &stu->classid);
                 p = findstu(stulist, mode, stu);
-                DATASHOWF;
-                LinkList_Show(p, show_stu);
+                if(NULL == p)
+                {
+                    printf("\t\t\t\t\t*********** Not found *************\n");
+                }
+                else
+                {
+                    DATASHOWF;
+                    LinkList_Show(p, show_stu);
+                }
                 putchar('\n');
                 putchar('\n');
                 printf("\t\t\t\t\t**********  Enter to continue  *******\n");

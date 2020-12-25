@@ -31,11 +31,25 @@ int getnewcid(node_t *head)
         return 1;
     }
     fclose(fp);
-
-    int length = LinkList_Length(head);
-
+    //取当前链表中的最大编号
+    int length = getmaxcid(head);
     return tmp_cid >= length ? tmp_cid+1 : length+1;
 }
+
+int getmaxcid(node_t *head)
+{
+    int cid = 0;
+    node_t *p = head->next;
+    stu_t stup = *(stu_t*)p->data;
+    while(p != head)
+    {
+        if(cid <= stup.cid)
+            cid = stup.cid;
+        p = p->next;
+    }
+    return cid;
+}
+
 
 /* ******************************************
  * Summary: 从文件中读取数据存放到链表
@@ -48,13 +62,11 @@ node_t *loadstu()
 {
     LinkList head = LinkCreate();
     SYSERR(head,==,NULL,"STU load data error\n",NULL);
-
     FILE *fp = fopen(STUFILE, "a+");
     SYSERR(fp,==,NULL,"Student file open err\n",NULL);
 
     int people_num;                     //存放读取出来的人数
     int max_num;                        //存放文件的最大编号
-
     if(fscanf(fp, "%d\t%d\n", &people_num, &max_num) == EOF)
     {
         //如果没有读到文件数据，说明为空，关闭文件，返回头结点
@@ -74,6 +86,7 @@ node_t *loadstu()
         bzero(tmp, sizeof(stu_t));
     }
     fclose(fp);
+    free(tmp);
     return head;
 }
 
@@ -103,6 +116,7 @@ int savestu(node_t *head)
     fprintf(fp, "%d\t%d\n", length, maxcid);
     //遍历链表
     node_t *p = head->next;
+    /* stu_t *sutp = ((stu_)) */
     while(p != head)
     {
         fprintf(fp, "%3d%8s%8s%4d%4d%4d%4d%4d%4d%4d\n", ((stu_t*)p->data)->cid, ((stu_t *)p->data)->name, ((stu_t*)p->data)->pass, \
@@ -124,6 +138,7 @@ int savestu(node_t *head)
  * ******************************************************/
 int addstu(node_t *head, stu_t *stup)
 {
+    
     //需要学生输入的数据有七个，其他自动生成
     printf("\t\t\t\t\t********************************\n");
     printf("\t\t\t\t\t******* Input Your name ********\n");
@@ -196,14 +211,21 @@ int addstu(node_t *head, stu_t *stup)
  * *****************************************************/
 node_t *findstu(node_t *head, int mode, stu_t *stu)
 {
-    node_t *p;
+    node_t *p = NULL;
     switch(mode)
     {
     case 0:
         return head;
     case 1:
-        p = LinkList_Find(head, stu, cmp_stu_cid);
-        return p;
+        if((p = LinkList_Find(head, stu, cmp_stu_cid)) == NULL)
+        {
+            return NULL;
+            break;
+        }
+        else
+        {
+            return p;
+        }
     case 2:
         {
             p = head;
@@ -211,6 +233,10 @@ node_t *findstu(node_t *head, int mode, stu_t *stu)
             while((p = LinkList_Find(p, stu, cmp_stu_name)) != NULL)
             {
                 LinkList_tInsert(nc, p->data, sizeof(stu_t));
+            }
+            if(NULL == nc->next->data)
+            {
+                return NULL;
             }
             return nc;
         }
@@ -221,6 +247,10 @@ node_t *findstu(node_t *head, int mode, stu_t *stu)
             while((p = LinkList_Find(p, stu, cmp_stu_classid)) != NULL)
             {
                 LinkList_tInsert(cc, p->data, sizeof(stu_t));
+            }
+            if(NULL == cc->next->data)
+            {
+                return NULL;
             }
             return cc;
         }
@@ -550,6 +580,7 @@ int Age_check(int age)
         return true;
     else
         {
+            setbuf(stdin,NULL);
             printf("\t\t\t\t\t*******  Input again  ********\n");
             return false;
         }
@@ -568,6 +599,7 @@ int Score_check(int score)
         return true;
     else
         {
+            setbuf(stdin,NULL);
             printf("\t\t\t\t\t*******  Input again  ********\n");
             return false;
         }
@@ -586,6 +618,7 @@ int Classid_check(int classid)
         return true;
     else
         {
+            setbuf(stdin,NULL);
             printf("\t\t\t\t\t*******  Input again  ********\n");
             return false;
         }
